@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
+import routes from './routes/routes';
+
 dotenv.config();
 
 const app = express();
@@ -17,12 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(morgan('dev'));
 
-app.get('/', (req: Request, res: Response) => {
-  return res.json({ status: 'success!!' });
-});
-
-// const routes = require('./routes/freelanceRoutes')(router);
-// app.use('/', routes);
+app.use('/', routes(router));
 
 function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404).json({ status: 'fail' });

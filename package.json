@@ -14,6 +14,8 @@
     "dc:cmp:devb": "docker-compose -f docker-compose.dev.yml up -d --build",
     "dc:cmp:devbv": "docker-compose -f docker-compose.dev.yml up -d --build -V",
     "dc:cmp:prod": "docker-compose -f docker-compose.yml up -d",
+    "dc:prisma:gen": "docker compose exec app npx prisma generate",
+    "dc:prisma:push": "docker compose exec app npm prisma db push",
     "test": "jest"
   },
   "author": "Vital Alex",
