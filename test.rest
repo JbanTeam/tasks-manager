@@ -1,2 +1,24 @@
 ###
-GET http://localhost:5000/api/start
+GET http://localhost:5000/api/users-count
+
+###
+GET http://localhost:5000/api/users
+
+###
+POST http://localhost:5000/api/signup HTTP/1.1
+content-type: application/json
+
+{
+  "name": "VitaAlex",
+  "email": "jban@mail.ru",
+  "password": "123"
+}
+
+###
+POST http://localhost:5000/api/signin HTTP/1.1
+content-type: application/json
+
+{
+  "email": "jban@mail.ru",
+  "password": "123"
+}
