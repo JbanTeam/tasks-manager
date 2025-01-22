@@ -15,6 +15,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   projects  Project[]
+  tasks     Task[]
 }
 
 model Project {
@@ -36,4 +37,7 @@ model Task {
   updatedAt   DateTime @updatedAt
   project     Project  @relation(fields: [projectId], references: [id])
   projectId   Int
+  performer   User?    @relation(fields: [performerId], references: [id])
+  performerId Int?
+  deadline    DateTime
 }

@@ -6,9 +6,10 @@
     "dev": "nodemon src/index.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/index.js",
+    "test": "jest",
     "prisma:gen": "npx prisma generate",
     "prisma:push": "npm prisma db push",
-    "prisma:migrate:dev": "npx prisma migrate dev --name init",
+    "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:migrate:deploy": "npx prisma migrate deploy",
     "dev:dc": "nodemon -L src/index.ts",
     "dc:img": "docker build -t tasks-img .",
@@ -26,8 +27,7 @@
     "dc:cmp:prodbv": "docker compose -f docker-compose.yml up -d --build -V",
     "dc:prisma:gen": "docker compose exec app npx prisma generate",
     "dc:prisma:push": "docker compose exec app npm prisma db push",
-    "dc:prisma:migrate": "docker compose exec app npx prisma migrate deploy",
-    "test": "jest"
+    "dc:prisma:migrate": "docker compose exec app npx prisma migrate dev"
   },
   "author": "Vital Alex",
   "license": "ISC",

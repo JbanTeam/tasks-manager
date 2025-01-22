@@ -1,10 +1,9 @@
-###
-GET http://localhost:5000/api/users-count
+### USERS ************************************************
 
-###
+### Get all users
 GET http://localhost:5000/api/users
 
-###
+### Sign Up
 POST http://localhost:5000/api/signup HTTP/1.1
 content-type: application/json
 
@@ -14,11 +13,42 @@ content-type: application/json
   "password": "123"
 }
 
-###
+### Sign In
 POST http://localhost:5000/api/signin HTTP/1.1
 content-type: application/json
 
 {
   "email": "jban@mail.ru",
   "password": "123"
+}
+
+### PROJECTS ************************************************
+
+### Get all projects
+GET http://localhost:5000/api/projects HTTP/1.1
+
+### Init project
+POST http://localhost:5000/api/users/1/projects HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NTQ2OTMxLCJleHAiOjE3Mzc1NTA1MzF9.AIGab7_eCY9JgwMi04mQ0iqIl5e2W17eNxfgEJ_kkfA
+
+{
+  "title": "Super project2",
+  "description": "super description2"
+}
+
+### TASKS ************************************************
+
+### Get all tasks
+GET http://localhost:5000/api/tasks HTTP/1.1
+
+### Init task
+POST http://localhost:5000/api/projects/1/tasks HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NTQ2OTMxLCJleHAiOjE3Mzc1NTA1MzF9.AIGab7_eCY9JgwMi04mQ0iqIl5e2W17eNxfgEJ_kkfA
+
+{
+  "title": "Super task",
+  "description": "super description",
+  "deadline": "2025-01-22T11:56:53.206Z"
 }
