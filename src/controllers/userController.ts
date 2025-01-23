@@ -2,8 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { getUsers, createUser, userByEmail, userById } from '../db/user';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'my-secret-key';
+import { JWT_SECRET } from '../constants';
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -37,7 +36,7 @@ const signIn = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = await userByEmail(email);
-    if (!user) return res.status(404).json({ errorMessage: 'User not found. Please provide a valid user ID.' });
+    if (!user) return res.status(404).json({ errorMessage: 'User not found. Please provide a valid user email.' });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).json({ errorMessage: 'Invalid credentials.' });

@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
 import routes from './routes/routes';
+import prisma from './db/client';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(morgan('dev'));
 
-app.use('/', routes(router));
+app.use('/api', routes(router));
 
 function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404).json({ status: 'fail' });
@@ -37,6 +38,11 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
 
 app.use(notFound);
 app.use(errorHandler);
+
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 server.listen(port, () => {
   console.log(`API started on localhost: ${port}`);

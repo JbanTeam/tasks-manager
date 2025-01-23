@@ -14,4 +14,4 @@ const assignTask = async (taskId: number, userId: number) => {
   });
 };
 
-export { createTask };
+export { createTask, assignTask };

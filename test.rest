@@ -30,10 +30,10 @@ GET http://localhost:5000/api/projects HTTP/1.1
 ### Init project
 POST http://localhost:5000/api/users/1/projects HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NTQ2OTMxLCJleHAiOjE3Mzc1NTA1MzF9.AIGab7_eCY9JgwMi04mQ0iqIl5e2W17eNxfgEJ_kkfA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NjQ0NDU0LCJleHAiOjE3Mzc2NDgwNTR9.wpUwTzqDXuq2ktfx-PIGSaC_4XDRoQKXDWyUl4tZOrk
 
 {
-  "title": "Super project2",
+  "title": "Super project",
   "description": "super description2"
 }
 
@@ -45,10 +45,15 @@ GET http://localhost:5000/api/tasks HTTP/1.1
 ### Init task
 POST http://localhost:5000/api/projects/1/tasks HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NTQ2OTMxLCJleHAiOjE3Mzc1NTA1MzF9.AIGab7_eCY9JgwMi04mQ0iqIl5e2W17eNxfgEJ_kkfA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NjQ0NDU0LCJleHAiOjE3Mzc2NDgwNTR9.wpUwTzqDXuq2ktfx-PIGSaC_4XDRoQKXDWyUl4tZOrk
 
 {
   "title": "Super task",
   "description": "super description",
   "deadline": "2025-01-22T11:56:53.206Z"
 }
+
+### Assign task to performer
+PUT http://localhost:5000/api/projects/1/tasks/1?performerId=1 HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3NjQ0NDU0LCJleHAiOjE3Mzc2NDgwNTR9.wpUwTzqDXuq2ktfx-PIGSaC_4XDRoQKXDWyUl4tZOrk

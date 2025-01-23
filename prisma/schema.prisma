@@ -30,14 +30,21 @@ model Project {
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   title       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  project     Project  @relation(fields: [projectId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  status      TaskStatus @default(CREATED)
+  project     Project    @relation(fields: [projectId], references: [id])
   projectId   Int
-  performer   User?    @relation(fields: [performerId], references: [id])
+  performer   User?      @relation(fields: [performerId], references: [id])
   performerId Int?
   deadline    DateTime
+}
+
+enum TaskStatus {
+  CREATED
+  IN_PROGRESS
+  DONE
 }

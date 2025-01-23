@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/index.js",
     "test": "jest",
@@ -11,7 +11,7 @@
     "prisma:push": "npm prisma db push",
     "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:migrate:deploy": "npx prisma migrate deploy",
-    "dev:dc": "nodemon -L src/index.ts",
+    "dev:dc": "nodemon -L",
     "dc:img": "docker build -t tasks-img .",
     "dc:con": "docker run -p 5000:5000 -d --name tasks-manager-app tasks-img",
     "dc:cmp:up": "docker compose up -d",
