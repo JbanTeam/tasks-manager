@@ -1,62 +1,66 @@
-import { Request, Response } from 'express';
-import { assignTask, createTask } from '../db/task';
-import { checkUserRightsForProject } from '../db/project';
-import { userById } from '../db/user';
+import { NextFunction, Request, Response } from 'express';
+import { TaskStatus } from '@prisma/client';
+import { assignTask, createTask, updateTaskStatus } from '../db/task';
+import HttpError from '../errors/HttpError';
 
-const initTask = async (req: Request, res: Response) => {
+const addTaskToProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user } = req;
     const { title, description, deadline } = req.body;
     const { projectId } = req.params;
 
-    if (!user) return res.status(401).json({ errorMessage: 'Unauthorized.' });
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
     if (!title || !deadline) {
-      return res.status(400).json({ errorMessage: 'Title and deadline are required.' });
+      throw new HttpError({ code: 400, message: 'Title and deadline are required.' });
     }
 
-    const ownProject = await checkUserRightsForProject(Number(projectId), user.userId);
-
-    if (!ownProject) return res.status(401).json({ errorMessage: 'You are not the owner of this project.' });
-
-    await createTask({ title, description, deadline, projectId: Number(projectId) });
+    await createTask({ title, description, deadline, projectId: Number(projectId) }, user.userId);
 
     res.status(201).json({
       message: 'Task created successfully.',
     });
   } catch (error) {
-    console.error('Failed to init new task:', error);
-    res.status(500).json({ error, errorMessage: 'Failed to init new task.' });
+    next(error);
   }
 };
 
-const assignTaskToUser = async (req: Request, res: Response) => {
+const assignTaskToUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { taskId, projectId } = req.params;
-    const { performerId } = req.query;
+    const { performerId } = req.body;
     const { user } = req;
 
-    if (!performerId) return res.status(400).json({ errorMessage: 'Performer ID is required.' });
+    if (!performerId) throw new HttpError({ code: 400, message: 'Performer ID is required.' });
 
-    if (!user) return res.status(401).json({ errorMessage: 'Unauthorized.' });
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
-    const ownProject = await checkUserRightsForProject(Number(projectId), user.userId);
-
-    if (!ownProject) return res.status(401).json({ errorMessage: 'You are not the owner of this project.' });
-
-    const performer = await userById(Number(performerId));
-
-    if (!performer) return res.status(404).json({ errorMessage: 'Performer is not exists.' });
-
-    await assignTask(Number(taskId), Number(performerId));
+    await assignTask(Number(taskId), Number(user.userId), Number(projectId), Number(performerId));
 
     res.status(201).json({
       message: 'Performer assigned successfully.',
     });
   } catch (error) {
-    console.error('Failed to assign task:', error);
-    res.status(500).json({ error, errorMessage: 'Failed to assign task.' });
+    next(error);
   }
 };
 
-export { initTask, assignTaskToUser };
+const changeTaskStatus = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { taskId, projectId } = req.params;
+    const status: TaskStatus = req.body.status;
+    const { user } = req;
+
+    if (!user) return res.status(401).json({ errorMessage: 'Unauthorized.' });
+
+    await updateTaskStatus(Number(taskId), Number(projectId), Number(user.userId), status);
+
+    res.status(201).json({
+      message: 'Task status changed successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { addTaskToProject, assignTaskToUser, changeTaskStatus };

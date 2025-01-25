@@ -1,31 +1,50 @@
-import { Request, Response } from 'express';
-import { createProject, getProjects } from '../db/project';
+import { NextFunction, Request, Response } from 'express';
+
+import { createProject, getProjects, userToPoject } from '../db/project';
+import HttpError from '../errors/HttpError';
 
 const getAllProjects = async (req: Request, res: Response) => {
   const projects = await getProjects();
   res.json(projects);
 };
 
-const initProject = async (req: Request, res: Response) => {
+const initProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user } = req;
-    const authorId = req.params.userId;
-    if (user?.userId !== Number(authorId)) return res.status(401).json({ errorMessage: 'Unauthorized.' });
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+
     const { title, description } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ errorMessage: 'Title is required.' });
-    }
+    if (!title) throw new HttpError({ code: 400, message: 'Title is required.' });
 
-    await createProject({ title, description, authorId: Number(authorId) });
+    await createProject({ title, description, authorId: Number(user.userId) });
 
     res.status(201).json({
       message: 'Project created successfully.',
     });
   } catch (error) {
-    console.error('Failed to init new project:', error);
-    res.status(500).json({ error, errorMessage: 'Failed to init new project.' });
+    next(error);
   }
 };
 
-export { getAllProjects, initProject };
+const addUserToProject = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
+    const { projectId } = req.params;
+    const { addedUserId } = req.body;
+
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+    if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
+    if (!addedUserId) throw new HttpError({ code: 401, message: 'User ID is required.' });
+
+    await userToPoject(Number(projectId), Number(user.userId), Number(addedUserId));
+
+    res.status(201).json({
+      message: 'User added successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { getAllProjects, initProject, addUserToProject };

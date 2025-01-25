@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import http from 'http';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
@@ -6,6 +6,7 @@ import morgan from 'morgan';
 
 import routes from './routes/routes';
 import prisma from './db/client';
+import errorHandler from './middlewares/errors';
 
 dotenv.config();
 
@@ -16,27 +17,11 @@ const router = express.Router();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(session({ secret: '$ekreT', saveUninitialized: false, resave: false, cookie: { maxAge: 86400 }}));
 
 app.use(morgan('dev'));
 
 app.use('/api', routes(router));
 
-function notFound(req: Request, res: Response, next: NextFunction) {
-  res.status(404).json({ status: 'fail' });
-  const error = new Error('Not Found - ' + req.originalUrl);
-  next(error);
-}
-
-function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  res.status(res.statusCode || 500);
-  res.json({
-    message: err.message,
-    stack: err.stack,
-  });
-}
-
-app.use(notFound);
 app.use(errorHandler);
 
 process.on('SIGINT', async () => {

@@ -8,14 +8,16 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  projects  Project[]
-  tasks     Task[]
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  password         String
+  name             String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  authoredProjects Project[] @relation("ProjectAuthor")
+  projects         Project[] @relation("ProjectUsers")
+  initiatedTasks   Task[]    @relation("TaskIniciator")
+  performedTasks   Task[]    @relation("TaskPerformer")
 }
 
 model Project {
@@ -24,8 +26,9 @@ model Project {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  author      User     @relation(fields: [authorId], references: [id])
+  author      User     @relation("ProjectAuthor", fields: [authorId], references: [id])
   authorId    Int
+  users       User[]   @relation("ProjectUsers")
   tasks       Task[]
 }
 
@@ -35,12 +38,17 @@ model Task {
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  beginAt     DateTime?
+  doneAt      DateTime?
   status      TaskStatus @default(CREATED)
   project     Project    @relation(fields: [projectId], references: [id])
   projectId   Int
-  performer   User?      @relation(fields: [performerId], references: [id])
+  performer   User?      @relation("TaskPerformer", fields: [performerId], references: [id])
   performerId Int?
+  iniciator   User?      @relation("TaskIniciator", fields: [iniciatorId], references: [id])
+  iniciatorId Int?
   deadline    DateTime
+  spentTime   String?
 }
 
 enum TaskStatus {
