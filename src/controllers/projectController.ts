@@ -1,20 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { createProject, getProjects, userToPoject } from '../db/project';
+import { createProject, getProjects, projectsByUser, userToPoject } from '../db/project';
 import HttpError from '../errors/HttpError';
 
 const getAllProjects = async (req: Request, res: Response) => {
   const projects = await getProjects();
-  res.json(projects);
+  res.status(200).json(projects);
+};
+
+const getProjectsByUser = async (req: Request, res: Response) => {
+  const { user } = req;
+
+  if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+
+  const projects = await projectsByUser(user.userId);
+  res.status(200).json(projects);
 };
 
 const initProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user } = req;
-    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
-
     const { title, description } = req.body;
 
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!title) throw new HttpError({ code: 400, message: 'Title is required.' });
 
     await createProject({ title, description, authorId: Number(user.userId) });
@@ -47,4 +55,4 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export { getAllProjects, initProject, addUserToProject };
+export { getAllProjects, getProjectsByUser, initProject, addUserToProject };

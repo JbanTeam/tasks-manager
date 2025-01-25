@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import { getAllUsers, signUp, getUser, signIn } from '../controllers/userController';
-import { addUserToProject, getAllProjects, initProject } from '../controllers/projectController';
-import { assignTaskToUser, changeTaskStatus, addTaskToProject } from '../controllers/taskController';
 import authMiddleware from '../middlewares/auth';
+import { addUserToProject, getAllProjects, getProjectsByUser, initProject } from '../controllers/projectController';
+import { assignTaskToUser, changeTaskStatus, addTaskToProject } from '../controllers/taskController';
+import { getAllUsers, signUp, getUser, signIn } from '../controllers/userController';
 
 const routes = (router: Router) => {
   router.get('/users', getAllUsers);
@@ -11,7 +11,8 @@ const routes = (router: Router) => {
   router.post('/signup', signUp);
   router.post('/signin', signIn);
 
-  router.get('/projects', getAllProjects);
+  router.get('/projects/all', getAllProjects);
+  router.get('/projects', authMiddleware, getProjectsByUser);
   router.post('/projects', authMiddleware, initProject);
   router.put('/projects/:projectId', authMiddleware, addUserToProject);
 
