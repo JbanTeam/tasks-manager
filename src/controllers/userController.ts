@@ -38,7 +38,7 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     const user = await userByEmail(email);
 
-    if (!user) throw new HttpError({ code: 401, message: 'User not found. Please provide a valid user email.' });
+    if (!user) throw new HttpError({ code: 401, message: 'Invalid credentials.' });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new HttpError({ code: 401, message: 'Invalid credentials.' });
@@ -56,8 +56,8 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
 
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    const user = await userById(Number(id));
+    const { userId } = req.params;
+    const user = await userById(Number(userId));
     if (!user) throw new HttpError({ code: 404, message: 'User not found. Please provide a valid user ID.' });
     res.status(200).json(user);
   } catch (error) {

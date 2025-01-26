@@ -1,16 +1,26 @@
 import { Prisma } from '@prisma/client';
 import HttpError from '../errors/HttpError';
 
-type ProjectType = Prisma.ProjectGetPayload<{
+export type ProjectType = Prisma.ProjectGetPayload<{
   select: {
     authorId: true;
-    tasks: { select: { id: true; iniciatorId: true; performerId: true; beginAt: true } };
+    tasks: {
+      select: {
+        id: true;
+        iniciatorId: true;
+        performerId: true;
+        beginAt: true;
+        doneAt: true;
+        spentTime: true;
+        status: true;
+      };
+    };
     users: { select: { id: true } };
   };
 }>;
 
-type TaskType = Prisma.TaskGetPayload<{
-  select: { iniciatorId: true; performerId: true; beginAt: true };
+export type TaskType = Prisma.TaskGetPayload<{
+  select: { iniciatorId: true; performerId: true; beginAt: true; doneAt: true; spentTime: true; status: true };
 }>;
 
 const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: number, authorId?: number) => {
@@ -18,7 +28,17 @@ const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: numbe
     where: { id: projectId },
     select: {
       authorId: true,
-      tasks: { select: { id: true, iniciatorId: true, performerId: true, beginAt: true } },
+      tasks: {
+        select: {
+          id: true,
+          iniciatorId: true,
+          performerId: true,
+          beginAt: true,
+          doneAt: true,
+          spentTime: true,
+          status: true,
+        },
+      },
       users: { select: { id: true } },
     },
   });
@@ -34,13 +54,13 @@ const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: numbe
 
 const checkUserMembership = (project: ProjectType, userId: number) => {
   if (!project.users.some(user => user.id === userId)) {
-    throw new HttpError({ code: 401, message: 'You are not a member of this project.' });
+    throw new HttpError({ code: 401, message: 'User is not a member of this project.' });
   }
 };
 
 const checkAddedUser = (project: ProjectType, addedUserId: number) => {
   if (project.users.some(user => user.id === addedUserId)) {
-    throw new HttpError({ code: 401, message: 'You are not a member of this project.' });
+    throw new HttpError({ code: 401, message: 'User is already a member of this project.' });
   }
 };
 

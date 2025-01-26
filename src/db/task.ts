@@ -14,7 +14,7 @@ type TaskUpdateData = {
   status: TaskStatus;
   beginAt?: Date;
   doneAt?: Date;
-  spentTime?: string;
+  spentTime?: number;
 };
 
 async function createTask(taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>, userId: number) {
@@ -32,6 +32,7 @@ const assignTask = async (taskId: number, userId: number, projectId: number, per
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists(tx, projectId);
     checkUserMembership(project, userId);
+    checkUserMembership(project, performerId);
 
     await checkPerformerExists(tx, performerId);
 
@@ -60,9 +61,9 @@ const updateTaskStatus = async (taskId: number, projectId: number, userId: numbe
     } else if (status === TaskStatus.DONE) {
       taskData.doneAt = new Date();
 
-      const { days, hours, minutes } = timeDifference(task.beginAt, taskData.doneAt);
+      const { diffInMillisec } = timeDifference(task.beginAt, taskData.doneAt);
 
-      taskData.spentTime = `${days}d:${hours}h:${minutes}m`;
+      taskData.spentTime = diffInMillisec;
     }
 
     return await tx.task.update({

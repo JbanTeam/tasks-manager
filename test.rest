@@ -1,4 +1,5 @@
 ### USERS ************************************************
+### USERS ************************************************
 
 ### Get all users
 GET http://localhost:5000/api/users
@@ -8,8 +9,8 @@ POST http://localhost:5000/api/signup HTTP/1.1
 content-type: application/json
 
 {
-  "name": "VitaAlex",
-  "email": "jban@mail.ru",
+  "name": "VitaAlex2",
+  "email": "jbanteam@mail.ru",
   "password": "123"
 }
 
@@ -23,6 +24,7 @@ content-type: application/json
 }
 
 ### PROJECTS ************************************************
+### PROJECTS ************************************************
 
 ### Get all projects
 GET http://localhost:5000/api/projects/all HTTP/1.1
@@ -30,53 +32,59 @@ GET http://localhost:5000/api/projects/all HTTP/1.1
 ### Get user projects and tasks
 GET http://localhost:5000/api/projects HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 ### Init project
 POST http://localhost:5000/api/projects HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 {
-  "title": "Super project3",
+  "title": "Super project2",
   "description": "super description2"
 }
 
 ### Add user to project
-PUT http://localhost:5000/api/projects/3 HTTP/1.1
+PUT http://localhost:5000/api/projects/2/add-user HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 {
   "addedUserId": 2
 }
 
+### Get project time
+GET http://localhost:5000/api/projects/1/time HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
+
+### TASKS ************************************************
 ### TASKS ************************************************
 
 ### Add task to project
-POST http://localhost:5000/api/projects/3/tasks HTTP/1.1
+POST http://localhost:5000/api/projects/2/tasks HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 {
-  "title": "Super task",
-  "description": "super description",
+  "title": "Super task3",
+  "description": "super description3",
   "deadline": "2025-02-22T11:56:53.206Z"
 }
 
 ### Assign task to performer
-PUT http://localhost:5000/api/projects/3/tasks/3/assign HTTP/1.1
+PUT http://localhost:5000/api/projects/1/tasks/2/assign HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 {
   "performerId": 1
 }
 
 ### Change status of task
-PUT http://localhost:5000/api/projects/3/tasks/3/status HTTP/1.1
+PUT http://localhost:5000/api/projects/2/tasks/3/status HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbnRlYW1AbWFpbC5ydSIsImlhdCI6MTczNzgzMjMxOSwiZXhwIjoxNzM4MDA1MTE5fQ.5VIXfLXuuK6jIsjkJ0xAvOxWzNymuYR4e5Tv-bDZF4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
 {
   "status": "DONE"

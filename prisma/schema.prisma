@@ -48,7 +48,7 @@ model Task {
   iniciator   User?      @relation("TaskIniciator", fields: [iniciatorId], references: [id])
   iniciatorId Int?
   deadline    DateTime
-  spentTime   String?
+  spentTime   Int?
 }
 
 enum TaskStatus {
