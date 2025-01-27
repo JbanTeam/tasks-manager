@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { createProject, getProjects, projectTime, projectsByUser, userToPoject } from '../db/project';
+import { createProject, getProjects, projectTime, projectsByUser, userToPoject } from '../db/functions/project';
 import HttpError from '../errors/HttpError';
 import { formatMilliseconds } from '../utils';
 
@@ -44,7 +44,7 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
-    if (!addedUserId) throw new HttpError({ code: 401, message: 'User ID is required.' });
+    if (!addedUserId) throw new HttpError({ code: 400, message: 'User ID is required.' });
 
     await userToPoject(Number(projectId), Number(user.userId), Number(addedUserId));
 
@@ -65,8 +65,8 @@ const getProjectTime = async (req: Request, res: Response, next: NextFunction) =
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
 
-    const totalMillisec = await projectTime(Number(projectId), timeFilter);
-    const time = formatMilliseconds(totalMillisec);
+    const totalMs = await projectTime(Number(projectId), timeFilter);
+    const time = formatMilliseconds(totalMs);
 
     res.status(200).json(time);
   } catch (error) {

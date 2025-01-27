@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 
 import routes from './routes/routes';
-import prisma from './db/client';
+import prisma from './db/prismaClient';
 import errorHandler from './middlewares/errors';
 import { port } from './constants';
 

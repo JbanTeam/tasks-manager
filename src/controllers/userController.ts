@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { getUsers, createUser, userByEmail, userById, developerTime } from '../db/user';
+import { getUsers, createUser, userByEmail, userById, developerTime } from '../db/functions/user';
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
+import { registrationSchema } from '../constants';
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -11,9 +12,11 @@ const getAllUsers = async (req: Request, res: Response) => {
 };
 
 const signUp = async (req: Request, res: Response, next: NextFunction) => {
-  // TODO: add validation
   try {
     const { name, email, password } = req.body;
+    const { error } = registrationSchema.validate(req.body);
+    if (error) throw error;
+
     const existingUser = await userByEmail(email);
 
     if (existingUser) throw new HttpError({ code: 400, message: 'User already exists.' });

@@ -9,9 +9,10 @@ POST http://localhost:5000/api/signup HTTP/1.1
 content-type: application/json
 
 {
-  "name": "VitaAlex2",
+  "name": "Vital",
   "email": "jbanteam@mail.ru",
-  "password": "123"
+  "password": "11111111",
+  "confirmPassword": "11111111"
 }
 
 ### Sign In

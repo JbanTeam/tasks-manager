@@ -1,6 +1,6 @@
 import { Task, TaskStatus } from '@prisma/client';
-import prisma from './client';
-import { timeDifference } from '../utils';
+import prisma from '../prismaClient';
+import { timeDifference } from '../../utils';
 import {
   checkPerformerExists,
   checkProjectExists,
@@ -8,7 +8,7 @@ import {
   checkUserIsInitiator,
   checkUserIsPerformer,
   checkUserMembership,
-} from './checkExists';
+} from '../checkExists';
 
 type TaskUpdateData = {
   status: TaskStatus;
@@ -61,9 +61,9 @@ const updateTaskStatus = async (taskId: number, projectId: number, userId: numbe
     } else if (status === TaskStatus.DONE) {
       taskData.doneAt = new Date();
 
-      const { diffInMillisec } = timeDifference(task.beginAt, taskData.doneAt);
+      const { ms } = timeDifference(task.beginAt, taskData.doneAt);
 
-      taskData.spentTime = diffInMillisec;
+      taskData.spentTime = ms;
     }
 
     return await tx.task.update({

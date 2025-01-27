@@ -1,7 +1,8 @@
 import { User } from '@prisma/client';
-import prisma from './client';
+import prisma from '../prismaClient';
+
 import { calculateProjectTime } from './project';
-import { formatMilliseconds } from '../utils';
+import { formatMilliseconds } from '../../utils';
 
 const getUsers = async () => {
   return await prisma.user.findMany({ include: { projects: true } });

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { TaskStatus } from '@prisma/client';
-import { assignTask, createTask, updateTaskStatus } from '../db/task';
+import { assignTask, createTask, updateTaskStatus } from '../db/functions/task';
 import HttpError from '../errors/HttpError';
 
 const addTaskToProject = async (req: Request, res: Response, next: NextFunction) => {

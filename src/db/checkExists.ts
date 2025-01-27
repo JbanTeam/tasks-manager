@@ -1,27 +1,7 @@
 import { Prisma } from '@prisma/client';
+
 import HttpError from '../errors/HttpError';
-
-export type ProjectType = Prisma.ProjectGetPayload<{
-  select: {
-    authorId: true;
-    tasks: {
-      select: {
-        id: true;
-        iniciatorId: true;
-        performerId: true;
-        beginAt: true;
-        doneAt: true;
-        spentTime: true;
-        status: true;
-      };
-    };
-    users: { select: { id: true } };
-  };
-}>;
-
-export type TaskType = Prisma.TaskGetPayload<{
-  select: { iniciatorId: true; performerId: true; beginAt: true; doneAt: true; spentTime: true; status: true };
-}>;
+import { ProjectType, TaskType } from '../types';
 
 const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: number, authorId?: number) => {
   const project = await tx.project.findUnique({

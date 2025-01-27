@@ -1,8 +1,10 @@
 import { Project } from '@prisma/client';
-import prisma from './client';
-import { checkAddedUser, checkProjectExists, TaskType } from './checkExists';
-import { timeDifference } from '../utils';
-import { ProjectTimeFilter, TaskStatus } from '../constants';
+import prisma from '../prismaClient';
+
+import { timeDifference } from '../../utils';
+import { TaskType } from '../../types';
+import { checkAddedUser, checkProjectExists } from '../checkExists';
+import { ProjectTimeFilter, TaskStatus } from '../../constants';
 
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
@@ -37,15 +39,15 @@ async function userToPoject(projectId: number, authorId: number, addedUserId: nu
 async function projectTime(projectId: number, filterTime?: string) {
   const project = await checkProjectExists(prisma, projectId);
 
-  const totalMillisec = calculateProjectTime(project.tasks, filterTime);
+  const totalMs = calculateProjectTime(project.tasks, filterTime);
 
-  return totalMillisec;
+  return totalMs;
 }
 
 const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
   const { now, filterDate } = assignFilterDate(filterTime);
 
-  const totalMillisec = tasks.reduce((acc: number, task: TaskType) => {
+  const totalMs = tasks.reduce((acc: number, task: TaskType) => {
     if (!task.beginAt) return acc;
     const taskBeginAt = new Date(task.beginAt);
     const taskDoneAt = task.doneAt ? new Date(task.doneAt) : now;
@@ -55,12 +57,13 @@ const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
 
       if (effectiveStart >= taskDoneAt) return acc;
 
-      const diffInMillisec = taskDoneAt.getTime() - effectiveStart.getTime();
-      acc += diffInMillisec;
+      const { ms } = timeDifference(effectiveStart, taskDoneAt);
+
+      acc += ms;
     } else {
       if (task.status === TaskStatus.IN_PROGRESS) {
-        const { diffInMillisec } = timeDifference(task.beginAt, now);
-        acc += diffInMillisec;
+        const { ms } = timeDifference(task.beginAt, now);
+        acc += ms;
       } else if (task.status === TaskStatus.DONE) {
         acc += Number(task.spentTime);
       }
@@ -69,7 +72,7 @@ const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
     return acc;
   }, 0);
 
-  return totalMillisec;
+  return totalMs;
 };
 
 const assignFilterDate = (filterTime?: string) => {
