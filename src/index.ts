@@ -7,12 +7,12 @@ import morgan from 'morgan';
 import routes from './routes/routes';
 import prisma from './db/client';
 import errorHandler from './middlewares/errors';
+import { port } from './constants';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 5000;
 const router = express.Router();
 
 app.use(bodyParser.json());

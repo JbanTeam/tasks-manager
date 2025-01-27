@@ -2,7 +2,7 @@ import { Project } from '@prisma/client';
 import prisma from './client';
 import { checkAddedUser, checkProjectExists, TaskType } from './checkExists';
 import { timeDifference } from '../utils';
-import { TaskStatus } from '../constants';
+import { ProjectTimeFilter, TaskStatus } from '../constants';
 
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
@@ -34,21 +34,49 @@ async function userToPoject(projectId: number, authorId: number, addedUserId: nu
   });
 }
 
-async function pojectTime(projectId: number) {
+async function projectTime(projectId: number, filter?: string) {
   const project = await checkProjectExists(prisma, projectId);
 
   const now = new Date();
+  let filterDate: Date | null = new Date();
+
+  switch (filter) {
+    case ProjectTimeFilter.WEEK:
+      filterDate.setDate(now.getDate() - 7);
+      break;
+    case ProjectTimeFilter.MONTH:
+      filterDate.setMonth(now.getMonth() - 1);
+      break;
+    default:
+      filterDate = null;
+      break;
+  }
+
   const totalMillisec = project.tasks.reduce((acc: number, task: TaskType) => {
-    if (task.status === TaskStatus.IN_PROGRESS) {
-      const { diffInMillisec } = timeDifference(task.beginAt, now);
+    if (!task.beginAt) return acc;
+    const taskBeginAt = new Date(task.beginAt);
+    const taskDoneAt = task.doneAt ? new Date(task.doneAt) : now;
+
+    if (filterDate) {
+      const effectiveStart = taskBeginAt > filterDate ? taskBeginAt : filterDate;
+
+      if (effectiveStart >= taskDoneAt) return acc;
+
+      const diffInMillisec = taskDoneAt.getTime() - effectiveStart.getTime();
       acc += diffInMillisec;
-    } else if (task.status === TaskStatus.DONE) {
-      acc += Number(task.spentTime);
+    } else {
+      if (task.status === TaskStatus.IN_PROGRESS) {
+        const { diffInMillisec } = timeDifference(task.beginAt, now);
+        acc += diffInMillisec;
+      } else if (task.status === TaskStatus.DONE) {
+        acc += Number(task.spentTime);
+      }
     }
+
     return acc;
   }, 0);
 
   return totalMillisec;
 }
 
-export { getProjects, projectsByUser, createProject, userToPoject, pojectTime };
+export { getProjects, projectsByUser, createProject, userToPoject, projectTime };

@@ -54,7 +54,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtY
 }
 
 ### Get project time
-GET http://localhost:5000/api/projects/1/time HTTP/1.1
+GET http://localhost:5000/api/projects/1/time?filter=month HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiamJhbkBtYWlsLnJ1IiwiaWF0IjoxNzM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MTV9.SaZck0WMUWXBu52pNiVKiITvYZj9KqumNLMLOqWGwaA
 
