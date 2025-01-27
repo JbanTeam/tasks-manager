@@ -9,4 +9,5 @@ export const TaskStatus = {
 export const ProjectTimeFilter = {
   WEEK: 'week',
   MONTH: 'month',
+  HOUR: 'hour',
 };

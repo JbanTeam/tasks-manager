@@ -1,5 +1,7 @@
 import { User } from '@prisma/client';
 import prisma from './client';
+import { calculateProjectTime } from './project';
+import { formatMilliseconds } from '../utils';
 
 const getUsers = async () => {
   return await prisma.user.findMany({ include: { projects: true } });
@@ -23,4 +25,48 @@ const userById = async (id: number) => {
   });
 };
 
-export { getUsers, createUser, userByEmail, userById };
+const developerTime = async (devId: number, timeFilter?: string, projectIds?: number[]) => {
+  let projects;
+  const tasksSelect = {
+    iniciatorId: true,
+    performerId: true,
+    beginAt: true,
+    doneAt: true,
+    spentTime: true,
+    status: true,
+  };
+
+  if (projectIds?.length) {
+    projects = await prisma.project.findMany({
+      where: { id: { in: projectIds }, users: { some: { id: devId } } },
+      include: {
+        tasks: {
+          where: { performerId: devId },
+          select: tasksSelect,
+        },
+      },
+    });
+  } else {
+    projects = await prisma.project.findMany({
+      where: { users: { some: { id: devId } } },
+      include: {
+        tasks: {
+          where: { performerId: devId },
+          select: tasksSelect,
+        },
+      },
+    });
+  }
+
+  const mappedProjects = projects.map(project => {
+    const projectMsTime = calculateProjectTime(project.tasks, timeFilter);
+    return {
+      projectId: project.id,
+      projectName: project.title,
+      timeSpent: formatMilliseconds(projectMsTime),
+    };
+  });
+  return mappedProjects;
+};
+
+export { getUsers, createUser, userByEmail, userById, developerTime };

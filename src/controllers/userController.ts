@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
-import { getUsers, createUser, userByEmail, userById } from '../db/user';
+import { getUsers, createUser, userByEmail, userById, developerTime } from '../db/user';
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
 
@@ -22,7 +22,7 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newUser = await createUser({ name, email, password: hashedPassword });
 
-    const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '2 days' });
+    const token = jwt.sign({ userId: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '7 days' });
 
     res.status(201).json({
       userId: newUser.id,
@@ -43,12 +43,25 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new HttpError({ code: 401, message: 'Invalid credentials.' });
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '2 days' });
+    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7 days' });
 
     res.status(201).json({
       userId: user.id,
       token,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getDeveloperTime = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { devId } = req.params;
+    const { timeFilter, projectIds } = req.query;
+    const ids = projectIds !== undefined ? String(projectIds).split(',').map(Number) : [];
+
+    const projectsTime = await developerTime(Number(devId), String(timeFilter), ids);
+    res.status(200).json(projectsTime);
   } catch (error) {
     next(error);
   }
@@ -65,4 +78,4 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { getAllUsers, signUp, signIn, getUser };
+export { getAllUsers, signUp, signIn, getUser, getDeveloperTime };

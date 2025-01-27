@@ -9,13 +9,14 @@ import {
   initProject,
 } from '../controllers/projectController';
 import { assignTaskToUser, changeTaskStatus, addTaskToProject } from '../controllers/taskController';
-import { getAllUsers, signUp, getUser, signIn } from '../controllers/userController';
+import { getAllUsers, signUp, getUser, signIn, getDeveloperTime } from '../controllers/userController';
 
 const routes = (router: Router) => {
-  router.get('/users', getAllUsers);
-  router.get('/users/:userId', getUser);
   router.post('/signup', signUp);
   router.post('/signin', signIn);
+  router.get('/users', getAllUsers);
+  router.get('/users/:userId', getUser);
+  router.get('/users/:devId/time', authMiddleware, getDeveloperTime);
 
   router.get('/projects/all', getAllProjects);
   router.get('/projects', authMiddleware, getProjectsByUser);

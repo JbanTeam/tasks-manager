@@ -54,13 +54,13 @@ const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: numbe
 
 const checkUserMembership = (project: ProjectType, userId: number) => {
   if (!project.users.some(user => user.id === userId)) {
-    throw new HttpError({ code: 401, message: 'User is not a member of this project.' });
+    throw new HttpError({ code: 400, message: 'User is not a member of this project.' });
   }
 };
 
 const checkAddedUser = (project: ProjectType, addedUserId: number) => {
   if (project.users.some(user => user.id === addedUserId)) {
-    throw new HttpError({ code: 401, message: 'User is already a member of this project.' });
+    throw new HttpError({ code: 400, message: 'User is already a member of this project.' });
   }
 };
 
@@ -75,7 +75,7 @@ const checkTaskExists = (project: ProjectType, taskId: number) => {
 const checkUserIsInitiator = (task: TaskType, userId: number) => {
   if (task.iniciatorId !== userId) {
     throw new HttpError({
-      code: 401,
+      code: 400,
       message: 'You cant assign yourself. You are not the initiator of this task.',
     });
   }
@@ -84,7 +84,7 @@ const checkUserIsInitiator = (task: TaskType, userId: number) => {
 const checkUserIsPerformer = (task: TaskType, userId: number) => {
   if (task.performerId !== userId) {
     throw new HttpError({
-      code: 401,
+      code: 400,
       message: 'You are not the performer of this task.',
     });
   }

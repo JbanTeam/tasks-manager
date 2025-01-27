@@ -34,25 +34,18 @@ async function userToPoject(projectId: number, authorId: number, addedUserId: nu
   });
 }
 
-async function projectTime(projectId: number, filter?: string) {
+async function projectTime(projectId: number, filterTime?: string) {
   const project = await checkProjectExists(prisma, projectId);
 
-  const now = new Date();
-  let filterDate: Date | null = new Date();
+  const totalMillisec = calculateProjectTime(project.tasks, filterTime);
 
-  switch (filter) {
-    case ProjectTimeFilter.WEEK:
-      filterDate.setDate(now.getDate() - 7);
-      break;
-    case ProjectTimeFilter.MONTH:
-      filterDate.setMonth(now.getMonth() - 1);
-      break;
-    default:
-      filterDate = null;
-      break;
-  }
+  return totalMillisec;
+}
 
-  const totalMillisec = project.tasks.reduce((acc: number, task: TaskType) => {
+const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
+  const { now, filterDate } = assignFilterDate(filterTime);
+
+  const totalMillisec = tasks.reduce((acc: number, task: TaskType) => {
     if (!task.beginAt) return acc;
     const taskBeginAt = new Date(task.beginAt);
     const taskDoneAt = task.doneAt ? new Date(task.doneAt) : now;
@@ -77,6 +70,27 @@ async function projectTime(projectId: number, filter?: string) {
   }, 0);
 
   return totalMillisec;
-}
+};
 
-export { getProjects, projectsByUser, createProject, userToPoject, projectTime };
+const assignFilterDate = (filterTime?: string) => {
+  const now = new Date();
+  let filterDate: Date | null = new Date();
+
+  switch (filterTime) {
+    case ProjectTimeFilter.WEEK:
+      filterDate.setDate(now.getDate() - 7);
+      break;
+    case ProjectTimeFilter.MONTH:
+      filterDate.setMonth(now.getMonth() - 1);
+      break;
+    case ProjectTimeFilter.HOUR:
+      filterDate.setHours(now.getHours() - 24);
+      break;
+    default:
+      filterDate = null;
+      break;
+  }
+  return { now, filterDate };
+};
+
+export { getProjects, projectsByUser, createProject, userToPoject, projectTime, calculateProjectTime };
