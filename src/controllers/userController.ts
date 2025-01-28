@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { getUsers, createUser, userByEmail, userById, developerTime } from '../db/functions/user';
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
-import { registrationSchema } from '../utils/validation';
+import { registrationSchema, loginSchema } from '../utils/validation';
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -39,6 +39,9 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
 const signIn = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
+    const { error } = loginSchema.validate(req.body);
+    if (error) throw error;
+
     const user = await userByEmail(email);
 
     if (!user) throw new HttpError({ code: 401, message: 'Invalid credentials.' });
@@ -48,7 +51,7 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
 
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7 days' });
 
-    res.status(201).json({
+    res.status(200).json({
       userId: user.id,
       token,
     });

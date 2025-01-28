@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { createProject, getProjects, projectTime, projectsByUser, userToPoject } from '../db/functions/project';
 import HttpError from '../errors/HttpError';
 import { formatMilliseconds } from '../utils/time';
+import { projectSchema } from '../utils/validation';
 
 const getAllProjects = async (req: Request, res: Response) => {
   const projects = await getProjects();
@@ -23,8 +24,10 @@ const initProject = async (req: Request, res: Response, next: NextFunction) => {
     const { user } = req;
     const { title, description } = req.body;
 
+    const { error } = projectSchema.validate(req.body);
+    if (error) throw error;
+
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
-    if (!title) throw new HttpError({ code: 400, message: 'Title is required.' });
 
     await createProject({ title, description, authorId: Number(user.userId) });
 

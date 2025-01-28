@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { TaskStatus } from '@prisma/client';
-import { assignTask, createTask, updateTaskStatus } from '../db/functions/task';
+
 import HttpError from '../errors/HttpError';
+import { taskSchema } from '../utils/validation';
+import { assignTask, createTask, updateTaskStatus } from '../db/functions/task';
 
 const addTaskToProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,11 +11,10 @@ const addTaskToProject = async (req: Request, res: Response, next: NextFunction)
     const { title, description, deadline } = req.body;
     const { projectId } = req.params;
 
-    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+    const { error } = taskSchema.validate(req.body);
+    if (error) throw error;
 
-    if (!title || !deadline) {
-      throw new HttpError({ code: 400, message: 'Title and deadline are required.' });
-    }
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
     await createTask({ title, description, deadline, projectId: Number(projectId) }, user.userId);
 

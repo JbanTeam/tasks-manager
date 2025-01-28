@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { ValidationError } from 'joi';
+import { Prisma } from '@prisma/client';
 import { CustomError } from '../errors/CustomError';
 
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -21,6 +22,9 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
     const errors = err.details.map(detail => ({ message: detail.message, context: detail.context }));
     console.error(JSON.stringify({ errors }, null, 2));
     return res.status(400).json({ errors });
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    console.error(JSON.stringify({ errors: [{ message: err.message, stack: err.stack }] }, null, 2));
+    return res.status(400).json({ errors: [{ message: err.message }] });
   }
   console.error(JSON.stringify(err, null, 2));
   return res.status(500).json({ errors: [{ message: 'Something went wrong' }] });
