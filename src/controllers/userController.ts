@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { getUsers, createUser, userByEmail, userById, developerTime } from '../db/functions/user';
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
-import { registrationSchema } from '../constants';
+import { registrationSchema } from '../utils/validation';
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await getUsers();

@@ -10,7 +10,7 @@ export const timeDifference = (beginAt: Date | null, doneAt: Date | null) => {
   return { days, hours, minutes, seconds, ms };
 };
 
-export const convertMillisec = (ms: number) => {
+export const convertMilliseconds = (ms: number) => {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);

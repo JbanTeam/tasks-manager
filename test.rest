@@ -12,7 +12,7 @@ content-type: application/json
   "name": "Vital",
   "email": "jbanteam@mail.ru",
   "password": "11111111",
-  "confirmPassword": "11111111"
+  "confirmPassword": "1111111"
 }
 
 ### Sign In

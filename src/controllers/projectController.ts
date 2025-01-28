@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { createProject, getProjects, projectTime, projectsByUser, userToPoject } from '../db/functions/project';
 import HttpError from '../errors/HttpError';
-import { formatMilliseconds } from '../utils';
+import { formatMilliseconds } from '../utils/time';
 
 const getAllProjects = async (req: Request, res: Response) => {
   const projects = await getProjects();

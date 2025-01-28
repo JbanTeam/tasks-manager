@@ -1,6 +1,7 @@
 import { Task, TaskStatus } from '@prisma/client';
 import prisma from '../prismaClient';
-import { timeDifference } from '../../utils';
+import { TaskUpdateData } from '../../types';
+import { timeDifference } from '../../utils/time';
 import {
   checkPerformerExists,
   checkProjectExists,
@@ -9,13 +10,6 @@ import {
   checkUserIsPerformer,
   checkUserMembership,
 } from '../checkExists';
-
-type TaskUpdateData = {
-  status: TaskStatus;
-  beginAt?: Date;
-  doneAt?: Date;
-  spentTime?: number;
-};
 
 async function createTask(taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>, userId: number) {
   return await prisma.$transaction(async tx => {

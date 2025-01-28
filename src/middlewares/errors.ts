@@ -19,7 +19,7 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
     return res.status(401).json({ errors: [{ message: 'Token expired.' }] });
   } else if (err instanceof ValidationError) {
     const errors = err.details.map(detail => ({ message: detail.message, context: detail.context }));
-    console.error(JSON.stringify(errors, null, 2));
+    console.error(JSON.stringify({ errors }, null, 2));
     return res.status(400).json({ errors });
   }
   console.error(JSON.stringify(err, null, 2));
