@@ -32,3 +32,5 @@ process.on('SIGINT', async () => {
 server.listen(port, () => {
   console.log(`API started on localhost: ${port}`);
 });
+
+export { server };
