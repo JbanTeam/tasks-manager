@@ -1,7 +1,8 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, TaskStatus } from '@prisma/client';
 
 import HttpError from '../errors/HttpError';
-import { ProjectType, TaskType } from '../types';
+import { timeDifference } from '../utils/time';
+import { ProjectType, TaskType, TaskUpdateData } from '../types';
 
 const checkProjectExists = async (tx: Prisma.TransactionClient, projectId: number, authorId?: number) => {
   const project = await tx.project.findUnique({
@@ -52,6 +53,38 @@ const checkTaskExists = (project: ProjectType, taskId: number) => {
   return task;
 };
 
+const checkTaskStatus = (task: TaskType, newStatus: TaskStatus) => {
+  const taskData: TaskUpdateData = { status: newStatus };
+
+  if (newStatus === task.status) {
+    throw new HttpError({ code: 400, message: 'Task is already in this status.' });
+  }
+
+  if (newStatus === TaskStatus.CREATED) {
+    throw new HttpError({ code: 400, message: 'Task cannot be marked CREATED.' });
+  }
+
+  if (newStatus === TaskStatus.IN_PROGRESS) {
+    if (task.status !== TaskStatus.CREATED) {
+      throw new HttpError({ code: 400, message: 'Task can only be marked IN_PROGRESS from CREATED.' });
+    }
+    taskData.beginAt = new Date();
+  } else if (newStatus === TaskStatus.DONE) {
+    if (task.status !== TaskStatus.IN_PROGRESS) {
+      throw new HttpError({ code: 400, message: 'Task can only be marked DONE from IN_PROGRESS.' });
+    }
+
+    taskData.doneAt = new Date();
+
+    if (task.beginAt) {
+      const { ms } = timeDifference(task.beginAt, taskData.doneAt);
+      taskData.spentTime = ms;
+    }
+  }
+
+  return taskData;
+};
+
 const checkUserIsInitiator = (task: TaskType, userId: number) => {
   if (task.iniciatorId !== userId) {
     throw new HttpError({
@@ -70,16 +103,14 @@ const checkUserIsPerformer = (task: TaskType, userId: number) => {
   }
 };
 
-const checkPerformerExists = async (tx: Prisma.TransactionClient, performerId: number) => {
-  const performer = await tx.user.findUnique({
-    where: { id: performerId },
+const checkUserExists = async (tx: Prisma.TransactionClient, userId: number) => {
+  const user = await tx.user.findUnique({
+    where: { id: userId },
   });
 
-  if (!performer) {
-    throw new HttpError({ code: 404, message: 'Performer not found.' });
+  if (!user) {
+    throw new HttpError({ code: 404, message: 'User not found.' });
   }
-
-  return performer;
 };
 
 export {
@@ -87,7 +118,8 @@ export {
   checkUserMembership,
   checkAddedUser,
   checkTaskExists,
+  checkTaskStatus,
   checkUserIsInitiator,
   checkUserIsPerformer,
-  checkPerformerExists,
+  checkUserExists,
 };

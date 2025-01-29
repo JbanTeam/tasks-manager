@@ -51,7 +51,7 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
 
     await userToPoject(Number(projectId), Number(user.userId), Number(addedUserId));
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'User added successfully.',
     });
   } catch (error) {

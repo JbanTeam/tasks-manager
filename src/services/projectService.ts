@@ -1,6 +1,7 @@
 import { TaskType } from '../types';
 import { timeDifference } from '../utils/time';
-import { ProjectTimeFilter, TaskStatus } from '../constants';
+import { ProjectTimeFilter } from '../constants';
+import { TaskStatus } from '@prisma/client';
 
 const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
   const { now, filterDate } = assignFilterDate(filterTime);

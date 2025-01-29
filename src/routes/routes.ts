@@ -18,16 +18,16 @@ const routes = (router: Router) => {
   router.get('/users/:userId', getUser);
   router.get('/users/:devId/time', authMiddleware, getDeveloperTime);
 
-  router.get('/projects/all', getAllProjects);
-  router.get('/projects', authMiddleware, getProjectsByUser);
+  router.get('/projects', getAllProjects);
+  router.get('/projects/own', authMiddleware, getProjectsByUser);
   router.get('/projects/:projectId', authMiddleware, getProjectsByUser);
   router.get('/projects/:projectId/time', authMiddleware, getProjectTime);
   router.post('/projects', authMiddleware, initProject);
-  router.put('/projects/:projectId/add-user', authMiddleware, addUserToProject);
+  router.patch('/projects/:projectId/add-user', authMiddleware, addUserToProject);
 
   router.post('/projects/:projectId/tasks', authMiddleware, addTaskToProject);
-  router.put('/projects/:projectId/tasks/:taskId/assign', authMiddleware, assignTaskToUser);
-  router.put('/projects/:projectId/tasks/:taskId/status', authMiddleware, changeTaskStatus);
+  router.patch('/projects/:projectId/tasks/:taskId/assign', authMiddleware, assignTaskToUser);
+  router.patch('/projects/:projectId/tasks/:taskId/status', authMiddleware, changeTaskStatus);
 
   return router;
 };

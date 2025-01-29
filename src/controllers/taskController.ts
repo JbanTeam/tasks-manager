@@ -38,7 +38,7 @@ const assignTaskToUser = async (req: Request, res: Response, next: NextFunction)
 
     await assignTask(Number(taskId), Number(user.userId), Number(projectId), Number(performerId));
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'Performer assigned successfully.',
     });
   } catch (error) {
@@ -56,7 +56,7 @@ const changeTaskStatus = async (req: Request, res: Response, next: NextFunction)
 
     await updateTaskStatus(Number(taskId), Number(projectId), Number(user.userId), status);
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'Task status changed successfully.',
     });
   } catch (error) {

@@ -1,7 +1,7 @@
 import { Project } from '@prisma/client';
 import prisma from '../prismaClient';
 
-import { checkAddedUser, checkProjectExists } from '../checkExists';
+import { checkAddedUser, checkProjectExists, checkUserExists } from '../checkExists';
 import { calculateProjectTime } from '../../services/projectService';
 
 const getProjects = async () => {
@@ -25,6 +25,7 @@ async function userToPoject(projectId: number, authorId: number, addedUserId: nu
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists(tx, projectId, authorId);
 
+    await checkUserExists(tx, addedUserId);
     checkAddedUser(project, addedUserId);
 
     await tx.project.update({
