@@ -101,7 +101,7 @@ describe('UserController SignUp', () => {
     expect(createUser).not.toHaveBeenCalled();
   });
 
-  test('SignUp database connection error', async () => {
+  test('SignUp database connection error, must return error', async () => {
     (registrationSchema.validate as jest.Mock).mockReturnValue({ error: null });
     (userByEmail as jest.Mock).mockRejectedValue(new Error('Database connection error'));
 

@@ -66,7 +66,7 @@ describe('ProjectController InitProject', () => {
     expect(createProject).not.toHaveBeenCalled();
   });
 
-  test('Init Project database connection error', async () => {
+  test('Init Project database connection error, must return error', async () => {
     const mockToken = jwt.sign({ userId: 1, email: 'vital@mail.ru' }, JWT_SECRET, { expiresIn: '7 days' });
 
     (createProject as jest.Mock).mockRejectedValue(new Error('Database connection error'));
