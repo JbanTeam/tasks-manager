@@ -1,11 +1,12 @@
 import { Project } from '@prisma/client';
 import prisma from '../prismaClient';
 
-import { checkAddedUser, checkProjectExists, checkUserExists } from '../checkExists';
+import { checkAddedUser, checkProjectExists, checkUserExists, checkUserIsAuthor } from '../checkExists';
 import { calculateProjectTime } from '../../services/projectService';
 
 type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
 type ProjectTimeParams = { projectId: number; timeFilter?: string };
+type DeleteProjectParams = { projectId: number; authorId: number };
 
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
@@ -24,12 +25,30 @@ const createProject = async (projectData: Pick<Project, 'title' | 'description' 
   });
 };
 
+const deleteProject = async ({ projectId, authorId }: DeleteProjectParams) => {
+  return await prisma.$transaction(async tx => {
+    const project = await checkProjectExists({ tx, projectId });
+    checkUserIsAuthor({ userId: project.authorId, authorId });
+
+    if (project.tasks.length) {
+      await tx.task.deleteMany({
+        where: { projectId },
+      });
+    }
+
+    await tx.project.delete({
+      where: { id: projectId, authorId },
+    });
+  });
+};
+
 async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectParams) {
   return await prisma.$transaction(async tx => {
-    const project = await checkProjectExists(tx, projectId, authorId);
+    const project = await checkProjectExists({ tx, projectId });
+    checkUserIsAuthor({ userId: project.authorId, authorId });
 
-    await checkUserExists(tx, addedUserId);
-    checkAddedUser(project, addedUserId);
+    await checkUserExists({ tx, userId: addedUserId });
+    checkAddedUser({ project, addedUserId });
 
     await tx.project.update({
       where: { id: projectId },
@@ -39,11 +58,11 @@ async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectP
 }
 
 async function projectTime({ projectId, timeFilter }: ProjectTimeParams) {
-  const project = await checkProjectExists(prisma, projectId);
+  const project = await checkProjectExists({ tx: prisma, projectId });
 
   const totalMs = calculateProjectTime(project.tasks, timeFilter);
 
   return totalMs;
 }
 
-export { getProjects, projectsByUser, createProject, userToPoject, projectTime };
+export { getProjects, projectsByUser, createProject, deleteProject, userToPoject, projectTime };

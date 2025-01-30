@@ -3,7 +3,7 @@ import { TaskStatus } from '@prisma/client';
 
 import HttpError from '../errors/HttpError';
 import { taskSchema } from '../utils/validation';
-import { assignTask, createTask, updateTaskStatus } from '../db/functions/task';
+import { assignTask, createTask, deleteTask, updateTaskStatus } from '../db/functions/task';
 
 const addTaskToProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -74,4 +74,21 @@ const changeTaskStatus = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export { addTaskToProject, assignTaskToUser, changeTaskStatus };
+const deleteTaskFromDb = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
+    const { projectId, taskId } = req.params;
+
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+
+    await deleteTask({ taskId: Number(taskId), projectId: Number(projectId), userId: user.userId });
+
+    res.status(200).json({
+      message: 'Task deleted successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { addTaskToProject, assignTaskToUser, changeTaskStatus, deleteTaskFromDb };

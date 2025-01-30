@@ -1,6 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { createProject, getProjects, projectTime, projectsByUser, userToPoject } from '../db/functions/project';
+import {
+  createProject,
+  deleteProject,
+  getProjects,
+  projectTime,
+  projectsByUser,
+  userToPoject,
+} from '../db/functions/project';
 import HttpError from '../errors/HttpError';
 import { formatMilliseconds } from '../utils/time';
 import { projectSchema } from '../utils/validation';
@@ -81,4 +88,21 @@ const getProjectTime = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-export { getAllProjects, getProjectsByUser, initProject, addUserToProject, getProjectTime };
+const deleteProjectFromDb = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
+    const { projectId } = req.params;
+
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+
+    await deleteProject({ projectId: Number(projectId), authorId: Number(user.userId) });
+
+    res.status(200).json({
+      message: 'Project deleted successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { getAllProjects, getProjectsByUser, initProject, deleteProjectFromDb, addUserToProject, getProjectTime };

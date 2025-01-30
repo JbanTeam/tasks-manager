@@ -11,7 +11,29 @@ type DeveloperTimeParams = {
 };
 
 const getUsers = async () => {
-  return await prisma.user.findMany({ include: { projects: true } });
+  return await prisma.user.findMany({
+    include: {
+      projects: {
+        select: {
+          id: true,
+          title: true,
+          authorId: true,
+          users: { select: { id: true } },
+          tasks: {
+            select: {
+              id: true,
+              iniciatorId: true,
+              performerId: true,
+              beginAt: true,
+              doneAt: true,
+              spentTime: true,
+              status: true,
+            },
+          },
+        },
+      },
+    },
+  });
 };
 
 const createUser = async (userData: Pick<User, 'name' | 'email' | 'password'>) => {
