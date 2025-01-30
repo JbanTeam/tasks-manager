@@ -6,6 +6,7 @@ import {
   getProjects,
   projectTime,
   projectsByUser,
+  userFromPoject,
   userToPoject,
 } from '../db/functions/project';
 import HttpError from '../errors/HttpError';
@@ -54,7 +55,7 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
-    if (!addedUserId) throw new HttpError({ code: 400, message: 'User ID is required.' });
+    if (!addedUserId) throw new HttpError({ code: 400, message: 'Added user ID is required.' });
 
     await userToPoject({
       projectId: Number(projectId),
@@ -64,6 +65,32 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
 
     res.status(200).json({
       message: 'User added successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const removeUserFromProject = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
+    const { projectId } = req.params;
+    const { removedUserId } = req.body;
+
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
+    if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
+    if (!removedUserId) throw new HttpError({ code: 400, message: 'Removed user ID is required.' });
+    if (user.userId === Number(removedUserId))
+      throw new HttpError({ code: 400, message: 'You cannot remove yourself.' });
+
+    await userFromPoject({
+      projectId: Number(projectId),
+      authorId: Number(user.userId),
+      removedUserId: Number(removedUserId),
+    });
+
+    res.status(200).json({
+      message: 'User removed successfully.',
     });
   } catch (error) {
     next(error);
@@ -105,4 +132,12 @@ const deleteProjectFromDb = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export { getAllProjects, getProjectsByUser, initProject, deleteProjectFromDb, addUserToProject, getProjectTime };
+export {
+  getAllProjects,
+  getProjectsByUser,
+  initProject,
+  deleteProjectFromDb,
+  addUserToProject,
+  removeUserFromProject,
+  getProjectTime,
+};

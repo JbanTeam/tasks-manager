@@ -59,8 +59,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtY
   "addedUserId": 2
 }
 
+### Remove user from project
+PATCH http://localhost:5000/api/projects/1/remove-user HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+
+{
+  "removedUserId": 2
+}
+
 ### Delete project
-DELETE http://localhost:5000/api/projects/2 HTTP/1.1
+DELETE http://localhost:5000/api/projects/1 HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
 

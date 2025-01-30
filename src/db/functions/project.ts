@@ -1,10 +1,17 @@
 import { Project } from '@prisma/client';
 import prisma from '../prismaClient';
 
-import { checkAddedUser, checkProjectExists, checkUserExists, checkUserIsAuthor } from '../checkExists';
+import {
+  checkAddedUser,
+  checkProjectExists,
+  checkRemovedUser,
+  checkUserExists,
+  checkUserIsAuthor,
+} from '../checkExists';
 import { calculateProjectTime } from '../../services/projectService';
 
 type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
+type UserFromProjectParams = { projectId: number; authorId: number; removedUserId: number };
 type ProjectTimeParams = { projectId: number; timeFilter?: string };
 type DeleteProjectParams = { projectId: number; authorId: number };
 
@@ -57,6 +64,21 @@ async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectP
   });
 }
 
+async function userFromPoject({ projectId, authorId, removedUserId }: UserFromProjectParams) {
+  return await prisma.$transaction(async tx => {
+    const project = await checkProjectExists({ tx, projectId });
+    checkUserIsAuthor({ userId: project.authorId, authorId });
+
+    await checkUserExists({ tx, userId: removedUserId });
+    checkRemovedUser({ project, removedUserId });
+
+    await tx.project.update({
+      where: { id: projectId },
+      data: { users: { disconnect: { id: removedUserId } } },
+    });
+  });
+}
+
 async function projectTime({ projectId, timeFilter }: ProjectTimeParams) {
   const project = await checkProjectExists({ tx: prisma, projectId });
 
@@ -65,4 +87,4 @@ async function projectTime({ projectId, timeFilter }: ProjectTimeParams) {
   return totalMs;
 }
 
-export { getProjects, projectsByUser, createProject, deleteProject, userToPoject, projectTime };
+export { getProjects, projectsByUser, createProject, deleteProject, userToPoject, userFromPoject, projectTime };

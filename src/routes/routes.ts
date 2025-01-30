@@ -8,6 +8,7 @@ import {
   getProjectsByUser,
   getProjectTime,
   initProject,
+  removeUserFromProject,
 } from '../controllers/projectController';
 import { assignTaskToUser, changeTaskStatus, addTaskToProject, deleteTaskFromDb } from '../controllers/taskController';
 import { getAllUsers, signUp, getUser, signIn, getDeveloperTime } from '../controllers/userController';
@@ -25,6 +26,7 @@ const routes = (router: Router) => {
   router.get('/projects/:projectId/time', authMiddleware, getProjectTime);
   router.post('/projects', authMiddleware, initProject);
   router.patch('/projects/:projectId/add-user', authMiddleware, addUserToProject);
+  router.patch('/projects/:projectId/remove-user', authMiddleware, removeUserFromProject);
   router.delete('/projects/:projectId', authMiddleware, deleteProjectFromDb);
 
   router.post('/projects/:projectId/tasks', authMiddleware, addTaskToProject);

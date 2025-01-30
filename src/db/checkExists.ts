@@ -49,6 +49,11 @@ const checkAddedUser = ({ project, addedUserId }: { project: ProjectType; addedU
     throw new HttpError({ code: 400, message: 'User is already a member of this project.' });
   }
 };
+const checkRemovedUser = ({ project, removedUserId }: { project: ProjectType; removedUserId: number }) => {
+  if (!project.users.some(user => user.id === removedUserId)) {
+    throw new HttpError({ code: 400, message: 'User is not a member of this project.' });
+  }
+};
 
 const checkTaskExists = ({ project, taskId }: { project: ProjectType; taskId: number }) => {
   const task = project.tasks.find(task => task.id === taskId);
@@ -123,6 +128,7 @@ export {
   checkUserMembership,
   checkUserIsAuthor,
   checkAddedUser,
+  checkRemovedUser,
   checkTaskExists,
   checkTaskStatus,
   checkUserIsInitiator,
