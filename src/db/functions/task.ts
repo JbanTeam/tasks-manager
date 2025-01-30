@@ -1,7 +1,6 @@
 import { Task, TaskStatus } from '@prisma/client';
 import prisma from '../prismaClient';
-import { TaskUpdateData } from '../../types';
-import { timeDifference } from '../../utils/time';
+
 import {
   checkProjectExists,
   checkTaskExists,
@@ -12,7 +11,26 @@ import {
   checkUserMembership,
 } from '../checkExists';
 
-async function createTask(taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>, userId: number) {
+type CreateTaskData = {
+  taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>;
+  userId: number;
+};
+
+type AssignTaskData = {
+  taskId: number;
+  userId: number;
+  projectId: number;
+  performerId: number;
+};
+
+type UpdateTaskStatusData = {
+  taskId: number;
+  projectId: number;
+  userId: number;
+  newStatus: TaskStatus;
+};
+
+async function createTask({ taskData, userId }: CreateTaskData) {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists(tx, taskData.projectId);
     checkUserMembership(project, userId);
@@ -23,7 +41,7 @@ async function createTask(taskData: Pick<Task, 'title' | 'description' | 'deadli
   });
 }
 
-const assignTask = async (taskId: number, userId: number, projectId: number, performerId: number) => {
+const assignTask = async ({ taskId, userId, projectId, performerId }: AssignTaskData) => {
   return await prisma.$transaction(async tx => {
     await checkUserExists(tx, performerId);
 
@@ -41,7 +59,7 @@ const assignTask = async (taskId: number, userId: number, projectId: number, per
   });
 };
 
-const updateTaskStatus = async (taskId: number, projectId: number, userId: number, newStatus: TaskStatus) => {
+const updateTaskStatus = async ({ taskId, projectId, userId, newStatus }: UpdateTaskStatusData) => {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists(tx, projectId);
     checkUserMembership(project, userId);

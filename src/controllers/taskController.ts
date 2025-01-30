@@ -16,7 +16,7 @@ const addTaskToProject = async (req: Request, res: Response, next: NextFunction)
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
-    await createTask({ title, description, deadline, projectId: Number(projectId) }, user.userId);
+    await createTask({ taskData: { title, description, deadline, projectId: Number(projectId) }, userId: user.userId });
 
     res.status(201).json({
       message: 'Task created successfully.',
@@ -36,7 +36,12 @@ const assignTaskToUser = async (req: Request, res: Response, next: NextFunction)
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
-    await assignTask(Number(taskId), Number(user.userId), Number(projectId), Number(performerId));
+    await assignTask({
+      taskId: Number(taskId),
+      userId: Number(user.userId),
+      projectId: Number(projectId),
+      performerId: Number(performerId),
+    });
 
     res.status(200).json({
       message: 'Performer assigned successfully.',
@@ -54,7 +59,12 @@ const changeTaskStatus = async (req: Request, res: Response, next: NextFunction)
 
     if (!user) return res.status(401).json({ errorMessage: 'Unauthorized.' });
 
-    await updateTaskStatus(Number(taskId), Number(projectId), Number(user.userId), status);
+    await updateTaskStatus({
+      taskId: Number(taskId),
+      projectId: Number(projectId),
+      userId: Number(user.userId),
+      newStatus: status,
+    });
 
     res.status(200).json({
       message: 'Task status changed successfully.',

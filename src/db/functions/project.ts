@@ -4,6 +4,9 @@ import prisma from '../prismaClient';
 import { checkAddedUser, checkProjectExists, checkUserExists } from '../checkExists';
 import { calculateProjectTime } from '../../services/projectService';
 
+type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
+type ProjectTimeParams = { projectId: number; timeFilter?: string };
+
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
 };
@@ -21,7 +24,7 @@ const createProject = async (projectData: Pick<Project, 'title' | 'description' 
   });
 };
 
-async function userToPoject(projectId: number, authorId: number, addedUserId: number) {
+async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectParams) {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists(tx, projectId, authorId);
 
@@ -35,10 +38,10 @@ async function userToPoject(projectId: number, authorId: number, addedUserId: nu
   });
 }
 
-async function projectTime(projectId: number, filterTime?: string) {
+async function projectTime({ projectId, timeFilter }: ProjectTimeParams) {
   const project = await checkProjectExists(prisma, projectId);
 
-  const totalMs = calculateProjectTime(project.tasks, filterTime);
+  const totalMs = calculateProjectTime(project.tasks, timeFilter);
 
   return totalMs;
 }

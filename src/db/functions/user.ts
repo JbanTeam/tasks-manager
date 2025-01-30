@@ -4,6 +4,12 @@ import prisma from '../prismaClient';
 import { calculateProjectTime } from '../../services/projectService';
 import { formatMilliseconds } from '../../utils/time';
 
+type DeveloperTimeParams = {
+  devId: number;
+  timeFilter?: string;
+  projectIds?: number[];
+};
+
 const getUsers = async () => {
   return await prisma.user.findMany({ include: { projects: true } });
 };
@@ -26,7 +32,7 @@ const userById = async (id: number) => {
   });
 };
 
-const developerTime = async (devId: number, timeFilter?: string, projectIds?: number[]) => {
+const developerTime = async ({ devId, timeFilter, projectIds }: DeveloperTimeParams) => {
   let projects;
   const tasksSelect = {
     iniciatorId: true,

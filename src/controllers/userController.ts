@@ -66,7 +66,7 @@ const getDeveloperTime = async (req: Request, res: Response, next: NextFunction)
     const { timeFilter, projectIds } = req.query;
     const ids = projectIds !== undefined ? String(projectIds).split(',').map(Number) : [];
 
-    const projectsTime = await developerTime(Number(devId), String(timeFilter), ids);
+    const projectsTime = await developerTime({ devId: Number(devId), timeFilter: String(timeFilter), projectIds: ids });
     res.status(200).json(projectsTime);
   } catch (error) {
     next(error);

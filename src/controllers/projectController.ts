@@ -49,7 +49,11 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
     if (!addedUserId) throw new HttpError({ code: 400, message: 'User ID is required.' });
 
-    await userToPoject(Number(projectId), Number(user.userId), Number(addedUserId));
+    await userToPoject({
+      projectId: Number(projectId),
+      authorId: Number(user.userId),
+      addedUserId: Number(addedUserId),
+    });
 
     res.status(200).json({
       message: 'User added successfully.',
@@ -68,7 +72,7 @@ const getProjectTime = async (req: Request, res: Response, next: NextFunction) =
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
 
-    const totalMs = await projectTime(Number(projectId), timeFilter);
+    const totalMs = await projectTime({ projectId: Number(projectId), timeFilter });
     const time = formatMilliseconds(totalMs);
 
     res.status(200).json(time);
