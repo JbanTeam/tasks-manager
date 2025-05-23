@@ -1,16 +1,34 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "rootDir": "src",
-    "outDir": "dist",
-    "strict": true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "target": "ES2021",
     "sourceMap": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "paths": {
+      "@modules/*": ["src/modules/*"],
+      "@src/*": ["src/*"]
+    }
   },
-  "include": ["src", "types/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.mock.ts"]
+  "include": ["src/**/*", "types/**/*"],
+  "exclude": ["dist", "node_modules", "jest.config.ts"]
 }

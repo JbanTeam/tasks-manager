@@ -1,6 +1,5 @@
 dist/
 build/
-prisma/migrations
 node_modules/
 package-lock.json
 # local env files
