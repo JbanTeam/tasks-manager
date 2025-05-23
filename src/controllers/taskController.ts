@@ -10,7 +10,7 @@ import {
   AssignTaskParams,
   ChangeTaskStatusBody,
   ChangeTaskStatusParams,
-} from '@src/types';
+} from '@src/types/reqTypes';
 
 const addTaskToProject = async (
   req: Request<AddTaskParams, unknown, AddTaskBody>,

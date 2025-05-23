@@ -1,5 +1,6 @@
 import 'express';
-import { DecodedUser } from '../../src/types';
+
+import { DecodedUser } from '@src/types/reqTypes';
 
 declare global {
   namespace Express {

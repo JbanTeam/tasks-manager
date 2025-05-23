@@ -9,7 +9,7 @@ import {
   InitProjectBody,
   RemoveUserFromProjectBody,
   RemoveUserFromProjectParams,
-} from '@src/types';
+} from '@src/types/reqTypes';
 import {
   createProject,
   deleteProject,

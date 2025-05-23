@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+
 import { JWT_SECRET } from '../constants';
-import { DecodedUser } from '../types';
 import HttpError from '../errors/HttpError';
+import { DecodedUser } from '../types/reqTypes';
 
 const authMiddleware = (req: Request, _res: Response, next: NextFunction) => {
   try {

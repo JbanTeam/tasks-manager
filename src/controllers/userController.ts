@@ -5,7 +5,7 @@ import { getUsers, createUser, userByEmail, userById, developerTime } from '../d
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
 import { registrationSchema, loginSchema } from '../utils/validation';
-import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RegisterBody } from '@src/types';
+import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RegisterBody } from '@src/types/reqTypes';
 
 const getAllUsers = async (_req: Request, res: Response) => {
   const users = await getUsers();
