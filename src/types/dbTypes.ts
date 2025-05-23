@@ -30,6 +30,16 @@ type DeveloperTimeParams = {
   projectIds?: number[];
 };
 
+type DeveloperTimeReturnType = {
+  projectId: number;
+  projectName: string;
+  timeSpent: {
+    days: number;
+    hours: number;
+    minutes: number;
+  };
+};
+
 export {
   UserToProjectParams,
   UserFromProjectParams,
@@ -39,4 +49,5 @@ export {
   AssignTaskData,
   UpdateTaskStatusData,
   DeveloperTimeParams,
+  DeveloperTimeReturnType,
 };

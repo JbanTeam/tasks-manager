@@ -12,7 +12,11 @@ const getAllUsers = async (_req: Request, res: Response) => {
   res.json(users);
 };
 
-const signUp = async (req: Request<unknown, unknown, RegisterBody>, res: Response, next: NextFunction) => {
+const signUp = async (
+  req: Request<unknown, unknown, RegisterBody>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { name, email, password } = req.body;
     const { error } = registrationSchema.validate(req.body);
@@ -37,7 +41,7 @@ const signUp = async (req: Request<unknown, unknown, RegisterBody>, res: Respons
   }
 };
 
-const signIn = async (req: Request<unknown, unknown, LoginBody>, res: Response, next: NextFunction) => {
+const signIn = async (req: Request<unknown, unknown, LoginBody>, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { email, password } = req.body;
     const { error } = loginSchema.validate(req.body);
@@ -65,7 +69,7 @@ const getDeveloperTime = async (
   req: Request<GetDevTimeParams, unknown, unknown, GetDevTimeQuery>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { devId } = req.params;
     const { timeFilter, projectIds } = req.query;
@@ -78,7 +82,7 @@ const getDeveloperTime = async (
   }
 };
 
-const getUser = async (req: Request, res: Response, next: NextFunction) => {
+const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { userId } = req.params;
     const user = await userById(Number(userId));

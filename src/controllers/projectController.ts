@@ -20,12 +20,12 @@ import {
   userToPoject,
 } from '../db/functions/project';
 
-const getAllProjects = async (_req: Request, res: Response) => {
+const getAllProjects = async (_req: Request, res: Response): Promise<void> => {
   const projects = await getProjects();
   res.status(200).json(projects);
 };
 
-const getProjectsByUser = async (req: Request, res: Response) => {
+const getProjectsByUser = async (req: Request, res: Response): Promise<void> => {
   const { user } = req;
 
   if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
@@ -34,7 +34,11 @@ const getProjectsByUser = async (req: Request, res: Response) => {
   res.status(200).json(projects);
 };
 
-const initProject = async (req: Request<unknown, unknown, InitProjectBody>, res: Response, next: NextFunction) => {
+const initProject = async (
+  req: Request<unknown, unknown, InitProjectBody>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { user } = req;
     const { title, description } = req.body;
@@ -58,7 +62,7 @@ const addUserToProject = async (
   req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const { projectId } = req.params;
@@ -86,7 +90,7 @@ const removeUserFromProject = async (
   req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const { projectId } = req.params;
@@ -112,7 +116,7 @@ const removeUserFromProject = async (
   }
 };
 
-const getProjectTime = async (req: Request, res: Response, next: NextFunction) => {
+const getProjectTime = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { user } = req;
     const { projectId } = req.params;
@@ -130,7 +134,7 @@ const getProjectTime = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
-const deleteProjectFromDb = async (req: Request, res: Response, next: NextFunction) => {
+const deleteProjectFromDb = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { user } = req;
     const { projectId } = req.params;

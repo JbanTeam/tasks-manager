@@ -3,7 +3,7 @@ import { User } from '@prisma/client';
 import prisma from '../prismaClient';
 import { ProjectType } from '@src/types';
 import { formatMilliseconds } from '@src/utils/time';
-import { DeveloperTimeParams } from '@src/types/dbTypes';
+import { DeveloperTimeParams, DeveloperTimeReturnType } from '@src/types/dbTypes';
 import { calculateProjectTime } from '@src/services/projectService';
 
 const getUsers = async () => {
@@ -32,25 +32,29 @@ const getUsers = async () => {
   });
 };
 
-const createUser = async (userData: Pick<User, 'name' | 'email' | 'password'>) => {
+const createUser = async (userData: Pick<User, 'name' | 'email' | 'password'>): Promise<User> => {
   return await prisma.user.create({
     data: userData,
   });
 };
 
-const userByEmail = async (email: string) => {
+const userByEmail = async (email: string): Promise<User | null> => {
   return await prisma.user.findUnique({
     where: { email },
   });
 };
 
-const userById = async (id: number) => {
+const userById = async (id: number): Promise<User | null> => {
   return await prisma.user.findUnique({
     where: { id },
   });
 };
 
-const developerTime = async ({ devId, timeFilter, projectIds }: DeveloperTimeParams) => {
+const developerTime = async ({
+  devId,
+  timeFilter,
+  projectIds,
+}: DeveloperTimeParams): Promise<DeveloperTimeReturnType[]> => {
   let projects: ProjectType[];
 
   if (projectIds?.length) {

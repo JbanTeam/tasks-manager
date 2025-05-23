@@ -22,13 +22,13 @@ const projectsByUser = async (userId: number) => {
   });
 };
 
-const createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>) => {
+const createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>): Promise<Project> => {
   return await prisma.project.create({
     data: { ...projectData, users: { connect: { id: projectData.authorId } } },
   });
 };
 
-const deleteProject = async ({ projectId, authorId }: DeleteProjectParams) => {
+const deleteProject = async ({ projectId, authorId }: DeleteProjectParams): Promise<void> => {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists({ tx, projectId });
     checkUserIsAuthor({ userId: project.authorId, authorId });
@@ -45,7 +45,7 @@ const deleteProject = async ({ projectId, authorId }: DeleteProjectParams) => {
   });
 };
 
-async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectParams) {
+async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectParams): Promise<void> {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists({ tx, projectId });
     checkUserIsAuthor({ userId: project.authorId, authorId });
@@ -60,7 +60,7 @@ async function userToPoject({ projectId, authorId, addedUserId }: UserToProjectP
   });
 }
 
-async function userFromPoject({ projectId, authorId, removedUserId }: UserFromProjectParams) {
+async function userFromPoject({ projectId, authorId, removedUserId }: UserFromProjectParams): Promise<void> {
   return await prisma.$transaction(async tx => {
     const project = await checkProjectExists({ tx, projectId });
     checkUserIsAuthor({ userId: project.authorId, authorId });
@@ -75,7 +75,7 @@ async function userFromPoject({ projectId, authorId, removedUserId }: UserFromPr
   });
 }
 
-async function projectTime({ projectId, timeFilter }: ProjectTimeParams) {
+async function projectTime({ projectId, timeFilter }: ProjectTimeParams): Promise<number> {
   const project = await checkProjectExists({ tx: prisma, projectId });
 
   const totalMs = calculateProjectTime(project.tasks, timeFilter);

@@ -4,7 +4,7 @@ import { TaskType } from '../types';
 import { timeDifference } from '../utils/time';
 import { ProjectTimeFilter } from '../constants';
 
-const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
+const calculateProjectTime = (tasks: TaskType[], filterTime?: string): number => {
   const { now, filterDate } = assignFilterDate(filterTime);
 
   const totalMs = tasks.reduce((acc: number, task: TaskType) => {
@@ -35,7 +35,7 @@ const calculateProjectTime = (tasks: TaskType[], filterTime?: string) => {
   return totalMs;
 };
 
-const assignFilterDate = (filterTime?: string) => {
+const assignFilterDate = (filterTime?: string): { now: Date; filterDate: Date | null } => {
   const now = new Date();
   let filterDate: Date | null = new Date();
 

@@ -16,7 +16,7 @@ const addTaskToProject = async (
   req: Request<AddTaskParams, unknown, AddTaskBody>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const { title, description, deadline } = req.body;
@@ -41,7 +41,7 @@ const assignTaskToUser = async (
   req: Request<AssignTaskParams, unknown, AssignTaskBody>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { taskId, projectId } = req.params;
     const { performerId } = req.body;
@@ -70,7 +70,7 @@ const changeTaskStatus = async (
   req: Request<ChangeTaskStatusParams, unknown, ChangeTaskStatusBody>,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { taskId, projectId } = req.params;
     const { status } = req.body;
@@ -93,7 +93,7 @@ const changeTaskStatus = async (
   }
 };
 
-const deleteTaskFromDb = async (req: Request, res: Response, next: NextFunction) => {
+const deleteTaskFromDb = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { user } = req;
     const { projectId, taskId } = req.params;
