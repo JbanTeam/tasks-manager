@@ -1,10 +1,10 @@
-FROM node:20.18.1-alpine as development
+FROM node:20.18.1-alpine AS development
 
 WORKDIR /usr/src/app
 
 COPY package*.json .
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -12,7 +12,7 @@ RUN chmod +x /usr/src/app/entrypoint.sh
 RUN npm run prisma:gen
 RUN npm run build
 
-FROM node:20.18.1-alpine as production
+FROM node:20.18.1-alpine AS production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
