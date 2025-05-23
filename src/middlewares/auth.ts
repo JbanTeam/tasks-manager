@@ -4,7 +4,7 @@ import { JWT_SECRET } from '../constants';
 import { DecodedUser } from '../types';
 import HttpError from '../errors/HttpError';
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = (req: Request, _res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 

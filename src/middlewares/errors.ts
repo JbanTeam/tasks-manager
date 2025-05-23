@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { ValidationError } from 'joi';
 import { Prisma } from '@prisma/client';
+import { Request, Response } from 'express';
+
 import { CustomError } from '../errors/CustomError';
 
-const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (err: Error, _req: Request, res: Response) => {
   if (err instanceof CustomError) {
     const { statusCode, errors, logging } = err;
     if (logging) {

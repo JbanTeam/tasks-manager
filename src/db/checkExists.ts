@@ -8,6 +8,9 @@ const checkProjectExists = async ({ tx, projectId }: { tx: Prisma.TransactionCli
   const project = await tx.project.findUnique({
     where: { id: projectId },
     select: {
+      id: true,
+      title: true,
+      description: true,
       authorId: true,
       tasks: {
         select: {

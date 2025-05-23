@@ -1,11 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import { TaskStatus } from '@prisma/client';
 
 import HttpError from '../errors/HttpError';
 import { taskSchema } from '../utils/validation';
 import { assignTask, createTask, deleteTask, updateTaskStatus } from '../db/functions/task';
+import {
+  AddTaskBody,
+  AddTaskParams,
+  AssignTaskBody,
+  AssignTaskParams,
+  ChangeTaskStatusBody,
+  ChangeTaskStatusParams,
+} from '@src/types';
 
-const addTaskToProject = async (req: Request, res: Response, next: NextFunction) => {
+const addTaskToProject = async (
+  req: Request<AddTaskParams, unknown, AddTaskBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user } = req;
     const { title, description, deadline } = req.body;
@@ -26,7 +37,11 @@ const addTaskToProject = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-const assignTaskToUser = async (req: Request, res: Response, next: NextFunction) => {
+const assignTaskToUser = async (
+  req: Request<AssignTaskParams, unknown, AssignTaskBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { taskId, projectId } = req.params;
     const { performerId } = req.body;
@@ -51,13 +66,17 @@ const assignTaskToUser = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-const changeTaskStatus = async (req: Request, res: Response, next: NextFunction) => {
+const changeTaskStatus = async (
+  req: Request<ChangeTaskStatusParams, unknown, ChangeTaskStatusBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { taskId, projectId } = req.params;
-    const status: TaskStatus = req.body.status;
+    const { status } = req.body;
     const { user } = req;
 
-    if (!user) return res.status(401).json({ errorMessage: 'Unauthorized.' });
+    if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
     await updateTaskStatus({
       taskId: Number(taskId),

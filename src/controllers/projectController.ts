@@ -1,5 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 
+import HttpError from '../errors/HttpError';
+import { formatMilliseconds } from '../utils/time';
+import { projectSchema } from '../utils/validation';
+import {
+  AddUserToProjectBody,
+  AddUserToProjectParams,
+  InitProjectBody,
+  RemoveUserFromProjectBody,
+  RemoveUserFromProjectParams,
+} from '@src/types';
 import {
   createProject,
   deleteProject,
@@ -9,11 +19,8 @@ import {
   userFromPoject,
   userToPoject,
 } from '../db/functions/project';
-import HttpError from '../errors/HttpError';
-import { formatMilliseconds } from '../utils/time';
-import { projectSchema } from '../utils/validation';
 
-const getAllProjects = async (req: Request, res: Response) => {
+const getAllProjects = async (_req: Request, res: Response) => {
   const projects = await getProjects();
   res.status(200).json(projects);
 };
@@ -27,7 +34,7 @@ const getProjectsByUser = async (req: Request, res: Response) => {
   res.status(200).json(projects);
 };
 
-const initProject = async (req: Request, res: Response, next: NextFunction) => {
+const initProject = async (req: Request<unknown, unknown, InitProjectBody>, res: Response, next: NextFunction) => {
   try {
     const { user } = req;
     const { title, description } = req.body;
@@ -47,12 +54,16 @@ const initProject = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const addUserToProject = async (req: Request, res: Response, next: NextFunction) => {
+const addUserToProject = async (
+  req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user } = req;
     const { projectId } = req.params;
     const { addedUserId } = req.body;
-
+    // TODO: validation
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     if (!projectId) throw new HttpError({ code: 400, message: 'Project ID is required.' });
     if (!addedUserId) throw new HttpError({ code: 400, message: 'Added user ID is required.' });
@@ -71,7 +82,11 @@ const addUserToProject = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-const removeUserFromProject = async (req: Request, res: Response, next: NextFunction) => {
+const removeUserFromProject = async (
+  req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user } = req;
     const { projectId } = req.params;

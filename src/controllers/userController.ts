@@ -5,13 +5,14 @@ import { getUsers, createUser, userByEmail, userById, developerTime } from '../d
 import { JWT_SECRET } from '../constants';
 import HttpError from '../errors/HttpError';
 import { registrationSchema, loginSchema } from '../utils/validation';
+import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RegisterBody } from '@src/types';
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (_req: Request, res: Response) => {
   const users = await getUsers();
   res.json(users);
 };
 
-const signUp = async (req: Request, res: Response, next: NextFunction) => {
+const signUp = async (req: Request<unknown, unknown, RegisterBody>, res: Response, next: NextFunction) => {
   try {
     const { name, email, password } = req.body;
     const { error } = registrationSchema.validate(req.body);
@@ -36,7 +37,7 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const signIn = async (req: Request, res: Response, next: NextFunction) => {
+const signIn = async (req: Request<unknown, unknown, LoginBody>, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     const { error } = loginSchema.validate(req.body);
@@ -60,11 +61,15 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getDeveloperTime = async (req: Request, res: Response, next: NextFunction) => {
+const getDeveloperTime = async (
+  req: Request<GetDevTimeParams, unknown, unknown, GetDevTimeQuery>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { devId } = req.params;
     const { timeFilter, projectIds } = req.query;
-    const ids = projectIds !== undefined ? String(projectIds).split(',').map(Number) : [];
+    const ids = projectIds !== undefined ? projectIds.toString().split(',').map(Number) : [];
 
     const projectsTime = await developerTime({ devId: Number(devId), timeFilter: String(timeFilter), projectIds: ids });
     res.status(200).json(projectsTime);

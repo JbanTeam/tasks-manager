@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
 import authMiddleware from '../middlewares/auth';
+import { getAllUsers, signUp, getUser, signIn, getDeveloperTime } from '../controllers/userController';
+import { assignTaskToUser, changeTaskStatus, addTaskToProject, deleteTaskFromDb } from '../controllers/taskController';
 import {
   addUserToProject,
   deleteProjectFromDb,
@@ -10,8 +12,6 @@ import {
   initProject,
   removeUserFromProject,
 } from '../controllers/projectController';
-import { assignTaskToUser, changeTaskStatus, addTaskToProject, deleteTaskFromDb } from '../controllers/taskController';
-import { getAllUsers, signUp, getUser, signIn, getDeveloperTime } from '../controllers/userController';
 
 const routes = (router: Router) => {
   router.post('/signup', signUp);

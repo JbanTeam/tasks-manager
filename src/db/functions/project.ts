@@ -1,5 +1,7 @@
 import { Project } from '@prisma/client';
+
 import prisma from '../prismaClient';
+import { calculateProjectTime } from '../../services/projectService';
 
 import {
   checkAddedUser,
@@ -8,7 +10,6 @@ import {
   checkUserExists,
   checkUserIsAuthor,
 } from '../checkExists';
-import { calculateProjectTime } from '../../services/projectService';
 
 type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
 type UserFromProjectParams = { projectId: number; authorId: number; removedUserId: number };
