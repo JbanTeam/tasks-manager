@@ -3,13 +3,8 @@ import { User } from '@prisma/client';
 import prisma from '../prismaClient';
 import { ProjectType } from '@src/types';
 import { formatMilliseconds } from '@src/utils/time';
+import { DeveloperTimeParams } from '@src/types/dbTypes';
 import { calculateProjectTime } from '@src/services/projectService';
-
-type DeveloperTimeParams = {
-  devId: number;
-  timeFilter?: string;
-  projectIds?: number[];
-};
 
 const getUsers = async () => {
   return await prisma.user.findMany({

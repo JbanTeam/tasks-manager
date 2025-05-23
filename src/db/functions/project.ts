@@ -2,7 +2,7 @@ import { Project } from '@prisma/client';
 
 import prisma from '../prismaClient';
 import { calculateProjectTime } from '../../services/projectService';
-
+import { DeleteProjectParams, ProjectTimeParams, UserFromProjectParams, UserToProjectParams } from '@src/types/dbTypes';
 import {
   checkAddedUser,
   checkProjectExists,
@@ -10,11 +10,6 @@ import {
   checkUserExists,
   checkUserIsAuthor,
 } from '../checkExists';
-
-type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
-type UserFromProjectParams = { projectId: number; authorId: number; removedUserId: number };
-type ProjectTimeParams = { projectId: number; timeFilter?: string };
-type DeleteProjectParams = { projectId: number; authorId: number };
 
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });

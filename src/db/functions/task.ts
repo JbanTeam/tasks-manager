@@ -1,7 +1,5 @@
-import { Task, TaskStatus } from '@prisma/client';
-
 import prisma from '../prismaClient';
-
+import { AssignTaskData, CreateTaskData, UpdateTaskStatusData } from '@src/types/dbTypes';
 import {
   checkProjectExists,
   checkTaskExists,
@@ -11,25 +9,6 @@ import {
   checkUserIsPerformer,
   checkUserMembership,
 } from '../checkExists';
-
-type CreateTaskData = {
-  taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>;
-  userId: number;
-};
-
-type AssignTaskData = {
-  taskId: number;
-  userId: number;
-  projectId: number;
-  performerId: number;
-};
-
-type UpdateTaskStatusData = {
-  taskId: number;
-  projectId: number;
-  userId: number;
-  newStatus: TaskStatus;
-};
 
 async function createTask({ taskData, userId }: CreateTaskData) {
   return await prisma.$transaction(async tx => {
