@@ -50,6 +50,16 @@ const userById = async (id: number): Promise<User | null> => {
   });
 };
 
+const updateRefreshToken = async ({
+  userId,
+  refreshToken,
+}: {
+  userId: number;
+  refreshToken: string | null;
+}): Promise<void> => {
+  await prisma.user.update({ where: { id: userId }, data: { refreshToken } });
+};
+
 const developerTime = async ({
   devId,
   timeFilter,
@@ -90,4 +100,4 @@ const developerTime = async ({
   return mappedProjects;
 };
 
-export { getUsers, createUser, userByEmail, userById, developerTime };
+export { getUsers, createUser, userByEmail, userById, updateRefreshToken, developerTime };

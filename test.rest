@@ -1,11 +1,17 @@
+@hostname = localhost
+@port = 5000
+@baseUrl = http://{{hostname}}:{{port}}/api
+@accessToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODEyMjMwNywiZXhwIjoxNzQ4MTIyNjA3fQ.WM0HhG4cur-8mLPIcHsO528JM-Gy0ZsvvN3il6NmkMw
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODEyMjMwNywiZXhwIjoxNzQ4NzI3MTA3fQ.iNnYbCG9Mz33-GKoShbPuTh75dFRwLGE2HMl6KehqO4
+
 ### USERS ************************************************
 ### USERS ************************************************
 
 ### Get all users
-GET http://localhost:5000/api/users
+GET {{baseUrl}}/users
 
 ### Sign Up
-POST http://localhost:5000/api/signup HTTP/1.1
+POST {{baseUrl}}/signup HTTP/1.1
 content-type: application/json
 
 {
@@ -16,7 +22,7 @@ content-type: application/json
 }
 
 ### Sign In
-POST http://localhost:5000/api/signin HTTP/1.1
+POST {{baseUrl}}/signin HTTP/1.1
 content-type: application/json
 
 {
@@ -24,26 +30,39 @@ content-type: application/json
   "password": "11111111"
 }
 
-### Get developer time
-GET http://localhost:5000/api/users/1/time?timeFilter=week&projectIds=1,2
+### Logout
+PATCH {{baseUrl}}/logout HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
+
+### Update access token
+POST {{baseUrl}}/update-access HTTP/1.1
+content-type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Get developer time
+GET {{baseUrl}}/users/1/time?timeFilter=week&projectIds=1,2
+content-type: application/json
+Authorization: {{accessToken}}
 
 ### PROJECTS ************************************************
 ### PROJECTS ************************************************
 
 ### Get all projects
-GET http://localhost:5000/api/projects HTTP/1.1
+GET {{baseUrl}}/projects HTTP/1.1
 
 ### Get user projects and tasks
-GET http://localhost:5000/api/projects/own HTTP/1.1
+GET {{baseUrl}}/projects/own HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 ### Init project
-POST http://localhost:5000/api/projects HTTP/1.1
+POST {{baseUrl}}/projects HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "title": "Super projec2",
@@ -51,40 +70,40 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtY
 }
 
 ### Add user to project
-PATCH http://localhost:5000/api/projects/1/add-user HTTP/1.1
+PATCH {{baseUrl}}/projects/1/add-user HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "addedUserId": 2
 }
 
 ### Remove user from project
-PATCH http://localhost:5000/api/projects/1/remove-user HTTP/1.1
+PATCH {{baseUrl}}/projects/1/remove-user HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "removedUserId": 2
 }
 
 ### Delete project
-DELETE http://localhost:5000/api/projects/1 HTTP/1.1
+DELETE {{baseUrl}}/projects/1 HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 ### Get project time of all developers
-GET http://localhost:5000/api/projects/1/time?timeFilter=month HTTP/1.1
+GET {{baseUrl}}/projects/1/time?timeFilter=month HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 ### TASKS ************************************************
 ### TASKS ************************************************
 
 ### Add task to project
-POST http://localhost:5000/api/projects/1/tasks HTTP/1.1
+POST {{baseUrl}}/projects/1/tasks HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "title": "Super task2",
@@ -93,24 +112,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtY
 }
 
 ### Assign task to performer
-PATCH http://localhost:5000/api/projects/1/tasks/1/assign HTTP/1.1
+PATCH {{baseUrl}}/projects/1/tasks/1/assign HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "performerId": 1
 }
 
 ### Change status of task
-PATCH http://localhost:5000/api/projects/1/tasks/1/status HTTP/1.1
+PATCH {{baseUrl}}/projects/1/tasks/1/status HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}
 
 {
   "status": "IN_PROGRESS"
 }
 
 ### Delete task
-DELETE http://localhost:5000/api/projects/1/tasks/1 HTTP/1.1
+DELETE {{baseUrl}}/projects/1/tasks/1 HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTczODIzNzMyNiwiZXhwIjoxNzM4ODQyMTI2fQ.X9nGBx3ClHF1vyArI45nFU4S4R90NEmbWGD1c_F3U5E
+Authorization: {{accessToken}}

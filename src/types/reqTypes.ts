@@ -69,6 +69,10 @@ export type RemoveUserFromProjectParams = {
   projectId: string;
 };
 
+export type RefreshTokenBody = {
+  refreshToken: string;
+};
+
 export type DecodedUser = {
   userId: number;
   email: string;
