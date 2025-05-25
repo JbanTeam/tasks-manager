@@ -2,7 +2,13 @@ import { Project } from '@prisma/client';
 
 import prisma from '../prismaClient';
 import { calculateProjectTime } from '../../services/projectService';
-import { DeleteProjectParams, ProjectTimeParams, UserFromProjectParams, UserToProjectParams } from '@src/types/dbTypes';
+import {
+  DeleteProjectParams,
+  DeveloperTimeParams,
+  ProjectTimeParams,
+  UserFromProjectParams,
+  UserToProjectParams,
+} from '@src/types/dbTypes';
 import {
   checkAddedUser,
   checkProjectExists,
@@ -10,6 +16,7 @@ import {
   checkUserExists,
   checkUserIsAuthor,
 } from '../checkExists';
+import { ProjectType } from '@src/types';
 
 const getProjects = async () => {
   return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
@@ -20,6 +27,34 @@ const projectsByUser = async (userId: number) => {
     where: { users: { some: { id: { equals: userId } } } },
     include: { tasks: { select: { status: true, performerId: true, performer: { select: { name: true } } } } },
   });
+};
+
+const projectsForDevTime = async ({ devId, projectIds }: DeveloperTimeParams) => {
+  let projects: ProjectType[];
+
+  if (projectIds?.length) {
+    projects = await prisma.project.findMany({
+      where: { id: { in: projectIds }, users: { some: { id: devId } } },
+      include: {
+        tasks: {
+          where: { performerId: devId },
+        },
+        users: { select: { id: true } },
+      },
+    });
+  } else {
+    projects = await prisma.project.findMany({
+      where: { users: { some: { id: devId } } },
+      include: {
+        tasks: {
+          where: { performerId: devId },
+        },
+        users: { select: { id: true } },
+      },
+    });
+  }
+
+  return projects;
 };
 
 const createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>): Promise<Project> => {
@@ -83,4 +118,13 @@ async function projectTime({ projectId, timeFilter }: ProjectTimeParams): Promis
   return totalMs;
 }
 
-export { getProjects, projectsByUser, createProject, deleteProject, userToPoject, userFromPoject, projectTime };
+export {
+  getProjects,
+  projectsByUser,
+  projectsForDevTime,
+  createProject,
+  deleteProject,
+  userToPoject,
+  userFromPoject,
+  projectTime,
+};

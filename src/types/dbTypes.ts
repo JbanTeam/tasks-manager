@@ -1,8 +1,10 @@
 import { Task, TaskStatus } from '@prisma/client';
 
+import { ProjectTimeFilter } from '.';
+
 type UserToProjectParams = { projectId: number; authorId: number; addedUserId: number };
 type UserFromProjectParams = { projectId: number; authorId: number; removedUserId: number };
-type ProjectTimeParams = { projectId: number; timeFilter?: string };
+type ProjectTimeParams = { projectId: number; timeFilter?: ProjectTimeFilter };
 type DeleteProjectParams = { projectId: number; authorId: number };
 
 type CreateTaskData = {
@@ -26,7 +28,7 @@ type UpdateTaskStatusData = {
 
 type DeveloperTimeParams = {
   devId: number;
-  timeFilter?: string;
+  timeFilter?: ProjectTimeFilter;
   projectIds?: number[];
 };
 

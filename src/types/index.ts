@@ -1,5 +1,11 @@
 import { Prisma, TaskStatus } from '@prisma/client';
 
+export enum ProjectTimeFilter {
+  WEEK = 'week',
+  MONTH = 'month',
+  HOUR = 'hour',
+}
+
 export type ProjectType = Prisma.ProjectGetPayload<{
   select: {
     id: true;

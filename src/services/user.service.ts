@@ -1,0 +1,109 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Request } from 'express';
+
+import HttpError from '@src/errors/HttpError';
+import { ProjectTimeFilter } from '@src/types';
+import { formatMilliseconds } from '@src/utils/time';
+import { calculateProjectTime } from './projectService';
+import { DeveloperTimeReturnType } from '@src/types/dbTypes';
+import { projectsForDevTime } from '@src/db/repositories/project';
+import { UserRepository } from '@src/db/repositories/user.repository';
+import { JWT_REFRESH_SECRET, JWT_SECRET } from '@src/constants';
+import {
+  DecodedUser,
+  GetDevTimeParams,
+  GetDevTimeQuery,
+  LoginBody,
+  RefreshTokenBody,
+  RegisterBody,
+} from '@src/types/reqTypes';
+
+export class UserService {
+  private readonly userRepository: UserRepository;
+
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+
+  registerUser = async (body: RegisterBody): Promise<{ accessToken: string; refreshToken: string }> => {
+    const { name, email, password } = body;
+    const existingUser = await this.userRepository.findUserByEmail(email);
+    if (existingUser) {
+      throw new HttpError({ code: 400, message: 'User already exists.' });
+    }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const newUser = await this.userRepository.createUser({ name, email, password: hashedPassword });
+    const tokens = this.generateTokens(newUser.id, newUser.email);
+    await this.userRepository.updateRefreshToken({ userId: newUser.id, refreshToken: tokens.refreshToken });
+    return tokens;
+  };
+
+  loginUser = async (body: LoginBody): Promise<{ accessToken: string; refreshToken: string }> => {
+    const { email, password } = body;
+    const user = await this.userRepository.findUserByEmail(email);
+    if (!user) {
+      throw new HttpError({ code: 401, message: 'Invalid credentials.' });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new HttpError({ code: 401, message: 'Invalid credentials.' });
+    }
+    const tokens = this.generateTokens(user.id, user.email);
+    await this.userRepository.updateRefreshToken({ userId: user.id, refreshToken: tokens.refreshToken });
+    return tokens;
+  };
+
+  getNewAccessToken = async (body: RefreshTokenBody): Promise<string> => {
+    const { refreshToken } = body;
+    const { userId }: DecodedUser = this.verifyRefreshToken(refreshToken);
+    const user = await this.userRepository.findUserById(userId);
+    if (!user) {
+      throw new HttpError({ code: 404, message: 'User not found' });
+    }
+    if (user.refreshToken !== refreshToken) {
+      throw new HttpError({ code: 401, message: 'Invalid refresh token' });
+    }
+    return this.generateAccessToken(user.id, user.email);
+  };
+
+  getDeveloperTime = async (
+    req: Request<GetDevTimeParams, unknown, unknown, GetDevTimeQuery>,
+  ): Promise<DeveloperTimeReturnType[]> => {
+    const { devId } = req.params;
+    const { timeFilter, projectIds } = req.query;
+    const ids = projectIds !== undefined ? projectIds.toString().split(',').map(Number) : [];
+
+    const projects = await projectsForDevTime({
+      devId: Number(devId),
+      projectIds: ids,
+    });
+
+    const mappedProjects = projects.map(project => {
+      const projectMsTime = calculateProjectTime(project.tasks, timeFilter as ProjectTimeFilter);
+      return {
+        projectId: project.id,
+        projectName: project.title,
+        timeSpent: formatMilliseconds(projectMsTime),
+      };
+    });
+    return mappedProjects;
+  };
+
+  private generateTokens = (userId: number, email: string): { accessToken: string; refreshToken: string } => {
+    const accessToken = this.generateAccessToken(userId, email);
+    const refreshToken = jwt.sign({ userId, email }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    return { accessToken, refreshToken };
+  };
+
+  private generateAccessToken = (userId: number, email: string): string => {
+    const accessToken = jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: '1h' });
+    return accessToken;
+  };
+
+  private verifyRefreshToken = (refreshToken: string): DecodedUser => {
+    const decodedUser: DecodedUser = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as DecodedUser;
+    return decodedUser;
+  };
+}

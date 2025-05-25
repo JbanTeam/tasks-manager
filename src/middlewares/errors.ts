@@ -1,17 +1,18 @@
 import jwt from 'jsonwebtoken';
 import { ValidationError } from 'joi';
 import { Prisma } from '@prisma/client';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { CustomError } from '../errors/CustomError';
 
-const errorHandler = (err: Error, _req: Request, res: Response) => {
+const errorHandler = (err: Error, _req: Request, res: Response, next: NextFunction) => {
+  void next;
+
   if (err instanceof CustomError) {
     const { statusCode, errors, logging } = err;
     if (logging) {
       console.error(JSON.stringify({ code: err.statusCode, errors: err.errors, stack: err.stack }, null, 2));
     }
-
     return res.status(statusCode).json({ errors });
   } else if (err instanceof jwt.JsonWebTokenError) {
     console.error(JSON.stringify(err, null, 2));

@@ -34,6 +34,39 @@ const loginSchema = Joi.object({
   }),
 });
 
+const updateAccessSchema = Joi.object({
+  refreshToken: Joi.string()
+    .required()
+    .pattern(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/)
+    .messages({
+      'string.pattern.base': 'Refresh token must be a valid JWT.',
+      'string.empty': 'Refresh token cannot be empty.',
+      'any.required': 'Refresh token is required.',
+    }),
+});
+
+export const getDeveloperTimeSchema = {
+  params: Joi.object({
+    devId: Joi.string().pattern(/^\d+$/).required().messages({
+      'string.pattern.base': 'devId must be a positive integer string.',
+      'any.required': 'devId is required.',
+    }),
+  }),
+
+  query: Joi.object({
+    timeFilter: Joi.string().valid('week', 'month', 'hour').optional().messages({
+      'any.only': 'timeFilter must be one of: week, month, hour.',
+    }),
+
+    projectIds: Joi.string()
+      .pattern(/^\d+(,\d+)*$/)
+      .optional()
+      .messages({
+        'string.pattern.base': 'projectIds must be a comma-separated list of numbers.',
+      }),
+  }),
+};
+
 const projectSchema = Joi.object({
   title: Joi.string().min(3).max(100).required().messages({
     'string.empty': 'Title cannot be empty.',
@@ -62,4 +95,4 @@ const taskSchema = Joi.object({
   }),
 });
 
-export { registrationSchema, loginSchema, projectSchema, taskSchema };
+export { registrationSchema, loginSchema, updateAccessSchema, projectSchema, taskSchema };

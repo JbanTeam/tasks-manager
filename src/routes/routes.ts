@@ -1,16 +1,9 @@
 import { Router } from 'express';
 
 import authMiddleware from '../middlewares/auth';
+import { catchAsync } from '@src/utils/catchAsync';
+import { UserController } from '../controllers/user.controller';
 import { assignTaskToUser, changeTaskStatus, addTaskToProject, deleteTaskFromDb } from '../controllers/taskController';
-import {
-  getAllUsers,
-  signUp,
-  getUser,
-  signIn,
-  getDeveloperTime,
-  logout,
-  updateAccessToken,
-} from '../controllers/userController';
 import {
   addUserToProject,
   deleteProjectFromDb,
@@ -20,16 +13,17 @@ import {
   initProject,
   removeUserFromProject,
 } from '../controllers/projectController';
-import { catchAsync } from '@src/utils/catchAsync';
+
+const userController = new UserController();
 
 const routes = (router: Router) => {
-  router.post('/signup', catchAsync(signUp));
-  router.post('/signin', catchAsync(signIn));
-  router.patch('/logout', authMiddleware, catchAsync(logout));
-  router.post('/update-access', catchAsync(updateAccessToken));
-  router.get('/users', catchAsync(getAllUsers));
-  router.get('/users/:userId', catchAsync(getUser));
-  router.get('/users/:devId/time', authMiddleware, catchAsync(getDeveloperTime));
+  router.post('/signup', catchAsync(userController.signUp));
+  router.post('/signin', catchAsync(userController.signIn));
+  router.patch('/logout', authMiddleware, catchAsync(userController.logout));
+  router.post('/update-access', catchAsync(userController.updateAccessToken));
+  router.get('/users', catchAsync(userController.getAllUsers));
+  router.get('/users/:userId', catchAsync(userController.getUser));
+  router.get('/users/:devId/time', authMiddleware, catchAsync(userController.getDeveloperTime));
 
   router.get('/projects', catchAsync(getAllProjects));
   router.get('/projects/own', authMiddleware, catchAsync(getProjectsByUser));
