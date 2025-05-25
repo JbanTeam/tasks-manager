@@ -13,7 +13,7 @@ import {
 } from '../checkExists';
 
 export class TaskRepository {
-  public createTask = async ({ taskData, userId }: CreateTaskData): Promise<Task> => {
+  createTask = async ({ taskData, userId }: CreateTaskData): Promise<Task> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId: taskData.projectId });
       checkUserMembership({ project, userId });
@@ -24,7 +24,7 @@ export class TaskRepository {
     });
   };
 
-  public assignTask = async ({ taskId, userId, projectId, performerId }: AssignTaskData): Promise<Task> => {
+  assignTask = async ({ taskId, userId, projectId, performerId }: AssignTaskData): Promise<Task> => {
     return await prisma.$transaction(async tx => {
       await checkUserExists({ tx, userId: performerId });
 
@@ -42,7 +42,7 @@ export class TaskRepository {
     });
   };
 
-  public updateTaskStatus = async ({ taskId, projectId, userId, newStatus }: UpdateTaskStatusData): Promise<Task> => {
+  updateTaskStatus = async ({ taskId, projectId, userId, newStatus }: UpdateTaskStatusData): Promise<Task> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
       checkUserMembership({ project, userId });
@@ -59,7 +59,7 @@ export class TaskRepository {
     });
   };
 
-  public deleteTask = async ({ taskId, projectId, userId }: Omit<UpdateTaskStatusData, 'newStatus'>): Promise<Task> => {
+  deleteTask = async ({ taskId, projectId, userId }: Omit<UpdateTaskStatusData, 'newStatus'>): Promise<Task> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
       checkUserMembership({ project, userId });

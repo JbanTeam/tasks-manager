@@ -18,6 +18,7 @@ import {
   RefreshTokenBody,
   RegisterBody,
 } from '@src/types/reqTypes';
+import { getDeveloperTimeSchema, loginSchema, registrationSchema, updateAccessSchema } from '@src/utils/validation';
 
 export class UserService {
   private readonly userRepository: UserRepository;
@@ -32,6 +33,9 @@ export class UserService {
 
   registerUser = async (body: RegisterBody): Promise<{ accessToken: string; refreshToken: string }> => {
     const { name, email, password } = body;
+    const { error } = registrationSchema.validate(body);
+    if (error) throw error;
+
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
       throw new HttpError({ code: 400, message: 'User already exists.' });
@@ -46,6 +50,8 @@ export class UserService {
 
   loginUser = async (body: LoginBody): Promise<{ accessToken: string; refreshToken: string }> => {
     const { email, password } = body;
+    const { error } = loginSchema.validate(body);
+    if (error) throw error;
     const user = await this.userRepository.findUserByEmail(email);
     if (!user) {
       throw new HttpError({ code: 401, message: 'Invalid credentials.' });
@@ -61,6 +67,9 @@ export class UserService {
 
   getNewAccessToken = async (body: RefreshTokenBody): Promise<string> => {
     const { refreshToken } = body;
+    const { error } = updateAccessSchema.validate(body);
+    if (error) throw error;
+
     const { userId }: DecodedUser = this.verifyRefreshToken(refreshToken);
     const user = await this.userRepository.findUserById(userId);
     if (!user) {
@@ -78,6 +87,11 @@ export class UserService {
     const { devId } = req.params;
     const { timeFilter, projectIds } = req.query;
     const ids = projectIds !== undefined ? projectIds.toString().split(',').map(Number) : [];
+
+    const { error: queryError } = getDeveloperTimeSchema.query.validate(req.query);
+    if (queryError) throw queryError;
+    const { error: paramsError } = getDeveloperTimeSchema.params.validate(req.params);
+    if (paramsError) throw paramsError;
 
     const projects = await this.projectRepository.projectsForDevTime({
       devId: Number(devId),

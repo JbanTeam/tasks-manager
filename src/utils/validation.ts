@@ -1,7 +1,12 @@
 import Joi from 'joi';
 
-const idParam = Joi.string().pattern(/^\d+$/).required().messages({
+const idParamStr = Joi.string().pattern(/^\d+$/).required().messages({
   'string.pattern.base': 'ID must be a positive integer string.',
+  'any.required': 'ID is required.',
+});
+
+const idParamNumber = Joi.number().integer().required().messages({
+  'number.integer': 'ID must be a positive integer.',
   'any.required': 'ID is required.',
 });
 
@@ -52,7 +57,7 @@ const updateAccessSchema = Joi.object({
 
 export const getDeveloperTimeSchema = {
   params: Joi.object({
-    devId: idParam,
+    devId: idParamStr,
   }),
 
   query: Joi.object({
@@ -82,24 +87,24 @@ const projectSchema = Joi.object({
 });
 
 const projectTimeSchema = Joi.object({
-  projectId: idParam,
+  projectId: idParamStr,
   timeFilter: Joi.string().valid('week', 'month', 'hour').required().messages({
     'any.only': 'timeFilter must be one of: week, month, hour.',
   }),
 });
 
 const addUserToProjectSchema = Joi.object({
-  projectId: idParam,
-  addedUserId: idParam,
+  projectId: idParamStr,
+  addedUserId: idParamNumber,
 });
 
 const removeUserFromProjectSchema = Joi.object({
-  projectId: idParam,
-  removedUserId: idParam,
+  projectId: idParamStr,
+  removedUserId: idParamNumber,
 });
 
 const deleteProjectSchema = Joi.object({
-  projectId: idParam,
+  projectId: idParamStr,
 });
 
 const taskSchema = Joi.object({
@@ -116,18 +121,18 @@ const taskSchema = Joi.object({
     'string.empty': 'Deadline cannot be empty.',
     'any.required': 'Deadline is required.',
   }),
-  projectId: idParam,
+  projectId: idParamStr,
 });
 
 const assignTaskSchema = Joi.object({
-  taskId: idParam,
-  projectId: idParam,
-  performerId: idParam,
+  taskId: idParamStr,
+  projectId: idParamStr,
+  performerId: idParamNumber,
 });
 
 const changeTaskStatusSchema = Joi.object({
-  taskId: idParam,
-  projectId: idParam,
+  taskId: idParamStr,
+  projectId: idParamStr,
   status: Joi.string().valid('CREATED', 'IN_PROGRESS', 'DONE').required().messages({
     'any.only': 'Status must be one of: CREATED, IN_PROGRESS, DONE.',
     'any.required': 'Status is required.',
@@ -135,8 +140,8 @@ const changeTaskStatusSchema = Joi.object({
 });
 
 const deleteTaskSchema = Joi.object({
-  taskId: idParam,
-  projectId: idParam,
+  taskId: idParamStr,
+  projectId: idParamStr,
 });
 
 export {

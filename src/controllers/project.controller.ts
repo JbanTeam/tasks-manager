@@ -19,7 +19,7 @@ export class ProjectController {
     this.projectService = new ProjectService();
   }
 
-  public getAllProjects = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAllProjects = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const projects = await this.projectService.getAllProjects();
       res.status(200).json(projects);
@@ -28,7 +28,7 @@ export class ProjectController {
     }
   };
 
-  public getProjectsByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getProjectsByUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const projects = await this.projectService.getProjectsByUser(req);
       res.status(200).json(projects);
@@ -37,7 +37,7 @@ export class ProjectController {
     }
   };
 
-  public initProject = async (
+  initProject = async (
     req: Request<unknown, unknown, InitProjectBody>,
     res: Response,
     next: NextFunction,
@@ -53,7 +53,7 @@ export class ProjectController {
     }
   };
 
-  public addUserToProject = async (
+  addUserToProject = async (
     req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>,
     res: Response,
     next: NextFunction,
@@ -69,7 +69,7 @@ export class ProjectController {
     }
   };
 
-  public removeUserFromProject = async (
+  removeUserFromProject = async (
     req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>,
     res: Response,
     next: NextFunction,
@@ -85,7 +85,7 @@ export class ProjectController {
     }
   };
 
-  public getProjectTime = async (
+  getProjectTime = async (
     req: Request<ProjectTimeParams, unknown, unknown, ProjectTimeQuery>,
     res: Response,
     next: NextFunction,
@@ -98,11 +98,7 @@ export class ProjectController {
     }
   };
 
-  public deleteProject = async (
-    req: Request<DeleteProjectParams>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteProject = async (req: Request<DeleteProjectParams>, res: Response, next: NextFunction): Promise<void> => {
     try {
       await this.projectService.deleteProject(req);
 

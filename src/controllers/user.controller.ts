@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from 'express';
 import HttpError from '../errors/HttpError';
 import { UserService } from '@src/services/user.service';
 import { UserRepository } from '../db/repositories/user.repository';
-import { registrationSchema, loginSchema, updateAccessSchema, getDeveloperTimeSchema } from '../utils/validation';
 import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RefreshTokenBody, RegisterBody } from '@src/types/reqTypes';
 
 export class UserController {
@@ -26,10 +25,8 @@ export class UserController {
 
   signUp = async (req: Request<unknown, unknown, RegisterBody>, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { error } = registrationSchema.validate(req.body);
-      if (error) throw error;
       const tokens = await this.userService.registerUser(req.body);
-      res.status(201).json({ ...tokens });
+      res.status(201).json(tokens);
     } catch (error) {
       next(error);
     }
@@ -37,10 +34,8 @@ export class UserController {
 
   signIn = async (req: Request<unknown, unknown, LoginBody>, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { error } = loginSchema.validate(req.body);
-      if (error) throw error;
       const tokens = await this.userService.loginUser(req.body);
-      res.status(200).json({ ...tokens });
+      res.status(200).json(tokens);
     } catch (error) {
       next(error);
     }
@@ -63,9 +58,6 @@ export class UserController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { error } = updateAccessSchema.validate(req.body);
-      if (error) throw error;
-
       const accessToken = await this.userService.getNewAccessToken(req.body);
       res.status(200).json({ accessToken });
     } catch (error) {
@@ -79,11 +71,6 @@ export class UserController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { error: queryError } = getDeveloperTimeSchema.query.validate(req.query);
-      if (queryError) throw queryError;
-      const { error: paramsError } = getDeveloperTimeSchema.params.validate(req.params);
-      if (paramsError) throw paramsError;
-
       const projectsTime = await this.userService.getDeveloperTime(req);
 
       res.status(200).json(projectsTime);

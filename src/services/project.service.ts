@@ -31,18 +31,18 @@ export class ProjectService {
     this.projectRepository = new ProjectRepository();
   }
 
-  public getAllProjects = async () => {
+  getAllProjects = async () => {
     return this.projectRepository.getProjects();
   };
 
-  public getProjectsByUser = async (req: Request) => {
+  getProjectsByUser = async (req: Request) => {
     const { user } = req;
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     return this.projectRepository.projectsByUser(user.userId);
   };
 
-  public initProject = async (req: Request<unknown, unknown, InitProjectBody>) => {
+  initProject = async (req: Request<unknown, unknown, InitProjectBody>) => {
     const { user } = req;
     const { title, description } = req.body;
 
@@ -58,7 +58,7 @@ export class ProjectService {
     });
   };
 
-  public addUserToProject = async (req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>) => {
+  addUserToProject = async (req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>) => {
     const { user } = req;
     const { projectId } = req.params;
     const { addedUserId } = req.body;
@@ -75,9 +75,7 @@ export class ProjectService {
     });
   };
 
-  public removeUserFromProject = async (
-    req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>,
-  ) => {
+  removeUserFromProject = async (req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>) => {
     const { user } = req;
     const { projectId } = req.params;
     const { removedUserId } = req.body;
@@ -96,7 +94,7 @@ export class ProjectService {
     });
   };
 
-  public getProjectTime = async (req: Request<ProjectTimeParams, unknown, unknown, ProjectTimeQuery>) => {
+  getProjectTime = async (req: Request<ProjectTimeParams, unknown, unknown, ProjectTimeQuery>) => {
     const { user } = req;
     const { projectId } = req.params;
     const { timeFilter } = req.query;
@@ -113,7 +111,7 @@ export class ProjectService {
     return time;
   };
 
-  public deleteProject = async (req: Request<DeleteProjectParams>) => {
+  deleteProject = async (req: Request<DeleteProjectParams>) => {
     const { user } = req;
     const { projectId } = req.params;
 
@@ -124,7 +122,7 @@ export class ProjectService {
     return this.projectRepository.deleteProject({ projectId: Number(projectId), authorId: user.userId });
   };
 
-  public calculateProjectTime = (tasks: TaskType[], filterTime?: ProjectTimeFilter): number => {
+  calculateProjectTime = (tasks: TaskType[], filterTime?: ProjectTimeFilter): number => {
     const { now, filterDate } = this.assignFilterDate(filterTime);
 
     const totalMs = tasks.reduce((acc: number, task: TaskType) => {

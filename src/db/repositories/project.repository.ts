@@ -17,23 +17,23 @@ import {
 } from '../checkExists';
 
 export class ProjectRepository {
-  public getProject = async (projectId: number): Promise<ProjectType> => {
+  getProject = async (projectId: number): Promise<ProjectType> => {
     const project = await checkProjectExists({ tx: prisma, projectId });
 
     return project;
   };
-  public getProjects = async () => {
+  getProjects = async () => {
     return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
   };
 
-  public projectsByUser = async (userId: number) => {
+  projectsByUser = async (userId: number) => {
     return await prisma.project.findMany({
       where: { users: { some: { id: { equals: userId } } } },
       include: { tasks: { select: { status: true, performerId: true, performer: { select: { name: true } } } } },
     });
   };
 
-  public projectsForDevTime = async ({ devId, projectIds }: DeveloperTimeParams) => {
+  projectsForDevTime = async ({ devId, projectIds }: DeveloperTimeParams) => {
     let projects: ProjectType[];
 
     if (projectIds?.length) {
@@ -61,13 +61,13 @@ export class ProjectRepository {
     return projects;
   };
 
-  public createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>): Promise<Project> => {
+  createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>): Promise<Project> => {
     return await prisma.project.create({
       data: { ...projectData, users: { connect: { id: projectData.authorId } } },
     });
   };
 
-  public deleteProject = async ({ projectId, authorId }: DeleteProjectParams): Promise<void> => {
+  deleteProject = async ({ projectId, authorId }: DeleteProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
       checkUserIsAuthor({ userId: project.authorId, authorId });
@@ -84,7 +84,7 @@ export class ProjectRepository {
     });
   };
 
-  public addUserToPoject = async ({ projectId, authorId, addedUserId }: UserToProjectParams): Promise<void> => {
+  addUserToPoject = async ({ projectId, authorId, addedUserId }: UserToProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
       checkUserIsAuthor({ userId: project.authorId, authorId });
@@ -99,11 +99,7 @@ export class ProjectRepository {
     });
   };
 
-  public removeUserFromPoject = async ({
-    projectId,
-    authorId,
-    removedUserId,
-  }: UserFromProjectParams): Promise<void> => {
+  removeUserFromPoject = async ({ projectId, authorId, removedUserId }: UserFromProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
       checkUserIsAuthor({ userId: project.authorId, authorId });
