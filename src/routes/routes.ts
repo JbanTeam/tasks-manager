@@ -3,7 +3,7 @@ import { Router } from 'express';
 import authMiddleware from '../middlewares/auth';
 import { catchAsync } from '@src/utils/catchAsync';
 import { UserController } from '../controllers/user.controller';
-import { assignTaskToUser, changeTaskStatus, addTaskToProject, deleteTaskFromDb } from '../controllers/taskController';
+import { TaskController } from '../controllers/task.controller';
 import {
   addUserToProject,
   deleteProjectFromDb,
@@ -15,6 +15,7 @@ import {
 } from '../controllers/projectController';
 
 const userController = new UserController();
+const taskController = new TaskController();
 
 const routes = (router: Router) => {
   router.post('/signup', catchAsync(userController.signUp));
@@ -34,10 +35,18 @@ const routes = (router: Router) => {
   router.patch('/projects/:projectId/remove-user', authMiddleware, catchAsync(removeUserFromProject));
   router.delete('/projects/:projectId', authMiddleware, catchAsync(deleteProjectFromDb));
 
-  router.post('/projects/:projectId/tasks', authMiddleware, catchAsync(addTaskToProject));
-  router.patch('/projects/:projectId/tasks/:taskId/assign', authMiddleware, catchAsync(assignTaskToUser));
-  router.patch('/projects/:projectId/tasks/:taskId/status', authMiddleware, catchAsync(changeTaskStatus));
-  router.delete('/projects/:projectId/tasks/:taskId', authMiddleware, catchAsync(deleteTaskFromDb));
+  router.post('/projects/:projectId/tasks', authMiddleware, catchAsync(taskController.addTaskToProject));
+  router.patch(
+    '/projects/:projectId/tasks/:taskId/assign',
+    authMiddleware,
+    catchAsync(taskController.assignTaskToUser),
+  );
+  router.patch(
+    '/projects/:projectId/tasks/:taskId/status',
+    authMiddleware,
+    catchAsync(taskController.changeTaskStatus),
+  );
+  router.delete('/projects/:projectId/tasks/:taskId', authMiddleware, catchAsync(taskController.deleteTask));
 
   return router;
 };

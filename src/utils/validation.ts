@@ -1,5 +1,10 @@
 import Joi from 'joi';
 
+const idParam = Joi.string().pattern(/^\d+$/).required().messages({
+  'string.pattern.base': 'ID must be a positive integer string.',
+  'any.required': 'ID is required.',
+});
+
 const registrationSchema = Joi.object({
   name: Joi.string().alphanum().min(3).max(20).required().messages({
     'string.empty': 'Name cannot be empty.',
@@ -47,10 +52,7 @@ const updateAccessSchema = Joi.object({
 
 export const getDeveloperTimeSchema = {
   params: Joi.object({
-    devId: Joi.string().pattern(/^\d+$/).required().messages({
-      'string.pattern.base': 'devId must be a positive integer string.',
-      'any.required': 'devId is required.',
-    }),
+    devId: idParam,
   }),
 
   query: Joi.object({
@@ -93,6 +95,36 @@ const taskSchema = Joi.object({
     'string.empty': 'Deadline cannot be empty.',
     'any.required': 'Deadline is required.',
   }),
+  projectId: idParam,
 });
 
-export { registrationSchema, loginSchema, updateAccessSchema, projectSchema, taskSchema };
+const assignTaskSchema = Joi.object({
+  taskId: idParam,
+  projectId: idParam,
+  performerId: idParam,
+});
+
+const changeTaskStatusSchema = Joi.object({
+  taskId: idParam,
+  projectId: idParam,
+  status: Joi.string().valid('CREATED', 'IN_PROGRESS', 'DONE').required().messages({
+    'any.only': 'Status must be one of: CREATED, IN_PROGRESS, DONE.',
+    'any.required': 'Status is required.',
+  }),
+});
+
+const deleteTaskSchema = Joi.object({
+  taskId: idParam,
+  projectId: idParam,
+});
+
+export {
+  registrationSchema,
+  loginSchema,
+  updateAccessSchema,
+  projectSchema,
+  taskSchema,
+  assignTaskSchema,
+  changeTaskStatusSchema,
+  deleteTaskSchema,
+};

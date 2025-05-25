@@ -34,6 +34,11 @@ export type AssignTaskBody = {
   performerId: number;
 };
 
+export type DeleteTaskParams = {
+  projectId: string;
+  taskId: string;
+};
+
 export type AssignTaskParams = {
   projectId: string;
   taskId: string;
