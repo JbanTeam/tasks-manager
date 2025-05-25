@@ -81,6 +81,27 @@ const projectSchema = Joi.object({
   }),
 });
 
+const projectTimeSchema = Joi.object({
+  projectId: idParam,
+  timeFilter: Joi.string().valid('week', 'month', 'hour').required().messages({
+    'any.only': 'timeFilter must be one of: week, month, hour.',
+  }),
+});
+
+const addUserToProjectSchema = Joi.object({
+  projectId: idParam,
+  addedUserId: idParam,
+});
+
+const removeUserFromProjectSchema = Joi.object({
+  projectId: idParam,
+  removedUserId: idParam,
+});
+
+const deleteProjectSchema = Joi.object({
+  projectId: idParam,
+});
+
 const taskSchema = Joi.object({
   title: Joi.string().min(3).max(200).required().messages({
     'string.empty': 'Title cannot be empty.',
@@ -123,6 +144,10 @@ export {
   loginSchema,
   updateAccessSchema,
   projectSchema,
+  projectTimeSchema,
+  deleteProjectSchema,
+  addUserToProjectSchema,
+  removeUserFromProjectSchema,
   taskSchema,
   assignTaskSchema,
   changeTaskStatusSchema,

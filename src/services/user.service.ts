@@ -4,11 +4,11 @@ import { Request } from 'express';
 
 import HttpError from '@src/errors/HttpError';
 import { ProjectTimeFilter } from '@src/types';
+import { ProjectService } from './project.service';
 import { formatMilliseconds } from '@src/utils/time';
-import { calculateProjectTime } from './projectService';
 import { DeveloperTimeReturnType } from '@src/types/dbTypes';
-import { projectsForDevTime } from '@src/db/repositories/project';
 import { UserRepository } from '@src/db/repositories/user.repository';
+import { ProjectRepository } from '@src/db/repositories/project.repository';
 import { JWT_REFRESH_SECRET, JWT_SECRET } from '@src/constants';
 import {
   DecodedUser,
@@ -21,9 +21,13 @@ import {
 
 export class UserService {
   private readonly userRepository: UserRepository;
+  private readonly projectService: ProjectService;
+  private readonly projectRepository: ProjectRepository;
 
   constructor() {
     this.userRepository = new UserRepository();
+    this.projectService = new ProjectService();
+    this.projectRepository = new ProjectRepository();
   }
 
   registerUser = async (body: RegisterBody): Promise<{ accessToken: string; refreshToken: string }> => {
@@ -75,13 +79,13 @@ export class UserService {
     const { timeFilter, projectIds } = req.query;
     const ids = projectIds !== undefined ? projectIds.toString().split(',').map(Number) : [];
 
-    const projects = await projectsForDevTime({
+    const projects = await this.projectRepository.projectsForDevTime({
       devId: Number(devId),
       projectIds: ids,
     });
 
     const mappedProjects = projects.map(project => {
-      const projectMsTime = calculateProjectTime(project.tasks, timeFilter as ProjectTimeFilter);
+      const projectMsTime = this.projectService.calculateProjectTime(project.tasks, timeFilter as ProjectTimeFilter);
       return {
         projectId: project.id,
         projectName: project.title,

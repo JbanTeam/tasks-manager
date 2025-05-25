@@ -1,4 +1,5 @@
 import { TaskStatus } from '@prisma/client';
+import { ProjectTimeFilter } from '.';
 
 export type RegisterBody = {
   name: string;
@@ -71,6 +72,17 @@ export type RemoveUserFromProjectBody = {
 };
 
 export type RemoveUserFromProjectParams = {
+  projectId: string;
+};
+
+export type ProjectTimeParams = {
+  projectId: string;
+};
+export type ProjectTimeQuery = {
+  timeFilter: ProjectTimeFilter;
+};
+
+export type DeleteProjectParams = {
   projectId: string;
 };
 

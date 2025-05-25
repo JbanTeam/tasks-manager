@@ -3,18 +3,11 @@ import { Router } from 'express';
 import authMiddleware from '../middlewares/auth';
 import { catchAsync } from '@src/utils/catchAsync';
 import { UserController } from '../controllers/user.controller';
+import { ProjectController } from '@src/controllers/project.controller';
 import { TaskController } from '../controllers/task.controller';
-import {
-  addUserToProject,
-  deleteProjectFromDb,
-  getAllProjects,
-  getProjectsByUser,
-  getProjectTime,
-  initProject,
-  removeUserFromProject,
-} from '../controllers/projectController';
 
 const userController = new UserController();
+const projectController = new ProjectController();
 const taskController = new TaskController();
 
 const routes = (router: Router) => {
@@ -26,14 +19,14 @@ const routes = (router: Router) => {
   router.get('/users/:userId', catchAsync(userController.getUser));
   router.get('/users/:devId/time', authMiddleware, catchAsync(userController.getDeveloperTime));
 
-  router.get('/projects', catchAsync(getAllProjects));
-  router.get('/projects/own', authMiddleware, catchAsync(getProjectsByUser));
-  router.get('/projects/:projectId', authMiddleware, catchAsync(getProjectsByUser));
-  router.get('/projects/:projectId/time', authMiddleware, catchAsync(getProjectTime));
-  router.post('/projects', authMiddleware, catchAsync(initProject));
-  router.patch('/projects/:projectId/add-user', authMiddleware, catchAsync(addUserToProject));
-  router.patch('/projects/:projectId/remove-user', authMiddleware, catchAsync(removeUserFromProject));
-  router.delete('/projects/:projectId', authMiddleware, catchAsync(deleteProjectFromDb));
+  router.get('/projects', catchAsync(projectController.getAllProjects));
+  router.get('/projects/own', authMiddleware, catchAsync(projectController.getProjectsByUser));
+  router.get('/projects/:projectId', authMiddleware, catchAsync(projectController.getProjectsByUser));
+  router.get('/projects/:projectId/time', authMiddleware, catchAsync(projectController.getProjectTime));
+  router.post('/projects', authMiddleware, catchAsync(projectController.initProject));
+  router.patch('/projects/:projectId/add-user', authMiddleware, catchAsync(projectController.addUserToProject));
+  router.patch('/projects/:projectId/remove-user', authMiddleware, catchAsync(projectController.removeUserFromProject));
+  router.delete('/projects/:projectId', authMiddleware, catchAsync(projectController.deleteProject));
 
   router.post('/projects/:projectId/tasks', authMiddleware, catchAsync(taskController.addTaskToProject));
   router.patch(
