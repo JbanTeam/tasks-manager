@@ -1,11 +1,11 @@
 import { Request } from 'express';
-import { TaskStatus } from '@prisma/client';
+import { Project, TaskStatus } from '@prisma/client';
 
-import { TaskType } from '../types';
-import { ProjectTimeFilter } from '@src/types';
 import HttpError from '@src/errors/HttpError';
-import { formatMilliseconds, timeDifference } from '../utils/time';
+import { ProjectTimeFilter } from '@src/types';
 import { ProjectRepository } from '../db/repositories/project.repository';
+import { formatMilliseconds, timeDifference } from '../utils/time';
+import { ProjectFullType, ProjectTimeType, TaskType } from '../types';
 import {
   addUserToProjectSchema,
   deleteProjectSchema,
@@ -31,18 +31,18 @@ export class ProjectService {
     this.projectRepository = new ProjectRepository();
   }
 
-  getAllProjects = async () => {
+  getAllProjects = async (): Promise<ProjectFullType[]> => {
     return this.projectRepository.getProjects();
   };
 
-  getProjectsByUser = async (req: Request) => {
+  getProjectsByUser = async (req: Request): Promise<ProjectFullType[]> => {
     const { user } = req;
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
     return this.projectRepository.projectsByUser(user.userId);
   };
 
-  initProject = async (req: Request<unknown, unknown, InitProjectBody>) => {
+  initProject = async (req: Request<unknown, unknown, InitProjectBody>): Promise<Project> => {
     const { user } = req;
     const { title, description } = req.body;
 
@@ -58,7 +58,7 @@ export class ProjectService {
     });
   };
 
-  addUserToProject = async (req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>) => {
+  addUserToProject = async (req: Request<AddUserToProjectParams, unknown, AddUserToProjectBody>): Promise<void> => {
     const { user } = req;
     const { projectId } = req.params;
     const { addedUserId } = req.body;
@@ -68,14 +68,16 @@ export class ProjectService {
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
 
-    return this.projectRepository.addUserToPoject({
+    await this.projectRepository.addUserToPoject({
       projectId: Number(projectId),
       authorId: user.userId,
       addedUserId: Number(addedUserId),
     });
   };
 
-  removeUserFromProject = async (req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>) => {
+  removeUserFromProject = async (
+    req: Request<RemoveUserFromProjectParams, unknown, RemoveUserFromProjectBody>,
+  ): Promise<void> => {
     const { user } = req;
     const { projectId } = req.params;
     const { removedUserId } = req.body;
@@ -87,14 +89,17 @@ export class ProjectService {
     if (user.userId === Number(removedUserId)) {
       throw new HttpError({ code: 400, message: 'You cannot remove yourself.' });
     }
-    return this.projectRepository.removeUserFromPoject({
+
+    await this.projectRepository.removeUserFromPoject({
       projectId: Number(projectId),
       removedUserId: Number(removedUserId),
       authorId: user.userId,
     });
   };
 
-  getProjectTime = async (req: Request<ProjectTimeParams, unknown, unknown, ProjectTimeQuery>) => {
+  getProjectTime = async (
+    req: Request<ProjectTimeParams, unknown, unknown, ProjectTimeQuery>,
+  ): Promise<ProjectTimeType> => {
     const { user } = req;
     const { projectId } = req.params;
     const { timeFilter } = req.query;
@@ -111,7 +116,7 @@ export class ProjectService {
     return time;
   };
 
-  deleteProject = async (req: Request<DeleteProjectParams>) => {
+  deleteProject = async (req: Request<DeleteProjectParams>): Promise<void> => {
     const { user } = req;
     const { projectId } = req.params;
 
@@ -119,7 +124,7 @@ export class ProjectService {
     if (error) throw error;
 
     if (!user) throw new HttpError({ code: 401, message: 'Unauthorized.' });
-    return this.projectRepository.deleteProject({ projectId: Number(projectId), authorId: user.userId });
+    await this.projectRepository.deleteProject({ projectId: Number(projectId), authorId: user.userId });
   };
 
   calculateProjectTime = (tasks: TaskType[], filterTime?: ProjectTimeFilter): number => {

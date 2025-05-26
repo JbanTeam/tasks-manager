@@ -1,7 +1,7 @@
 import { Task } from '@prisma/client';
 
 import prisma from '../prismaClient';
-import { AssignTaskData, CreateTaskData, UpdateTaskStatusData } from '@src/types/dbTypes';
+import { AssignTaskData, CreateTaskData, UpdateTaskStatusData } from '@src/types';
 import {
   checkProjectExists,
   checkTaskExists,

@@ -1,31 +1,13 @@
 import { User } from '@prisma/client';
 
 import prisma from '../prismaClient';
+import { UserFullType } from '@src/types';
+import { userFullSelect } from '../selects/user.select';
 
 export class UserRepository {
-  getUsers = async (): Promise<User[]> => {
+  getUsers = async (): Promise<UserFullType[]> => {
     return await prisma.user.findMany({
-      include: {
-        projects: {
-          select: {
-            id: true,
-            title: true,
-            authorId: true,
-            users: { select: { id: true } },
-            tasks: {
-              select: {
-                id: true,
-                iniciatorId: true,
-                performerId: true,
-                beginAt: true,
-                doneAt: true,
-                spentTime: true,
-                status: true,
-              },
-            },
-          },
-        },
-      },
+      select: userFullSelect,
     });
   };
 

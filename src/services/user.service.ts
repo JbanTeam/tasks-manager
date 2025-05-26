@@ -6,7 +6,7 @@ import HttpError from '@src/errors/HttpError';
 import { ProjectTimeFilter } from '@src/types';
 import { ProjectService } from './project.service';
 import { formatMilliseconds } from '@src/utils/time';
-import { DeveloperTimeReturnType } from '@src/types/dbTypes';
+import { DeveloperTimeReturnType } from '@src/types';
 import { UserRepository } from '@src/db/repositories/user.repository';
 import { ProjectRepository } from '@src/db/repositories/project.repository';
 import { JWT_REFRESH_SECRET, JWT_SECRET } from '@src/constants';

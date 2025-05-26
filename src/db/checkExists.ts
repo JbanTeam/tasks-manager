@@ -2,29 +2,19 @@ import { Prisma, TaskStatus } from '@prisma/client';
 
 import HttpError from '../errors/HttpError';
 import { timeDifference } from '../utils/time';
-import { ProjectType, TaskType, TaskUpdateData } from '../types';
+import { ProjectFullType, TaskType, TaskUpdateData } from '../types';
+import { projectFullSelect } from './selects/project.select';
 
-const checkProjectExists = async ({ tx, projectId }: { tx: Prisma.TransactionClient; projectId: number }) => {
+const checkProjectExists = async ({
+  tx,
+  projectId,
+}: {
+  tx: Prisma.TransactionClient;
+  projectId: number;
+}): Promise<ProjectFullType> => {
   const project = await tx.project.findUnique({
     where: { id: projectId },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      authorId: true,
-      tasks: {
-        select: {
-          id: true,
-          iniciatorId: true,
-          performerId: true,
-          beginAt: true,
-          doneAt: true,
-          spentTime: true,
-          status: true,
-        },
-      },
-      users: { select: { id: true } },
-    },
+    select: projectFullSelect,
   });
 
   if (!project) throw new HttpError({ code: 404, message: 'Project not found.' });
@@ -32,13 +22,13 @@ const checkProjectExists = async ({ tx, projectId }: { tx: Prisma.TransactionCli
   return project;
 };
 
-const checkUserMembership = ({ project, userId }: { project: ProjectType; userId: number }) => {
+const checkUserMembership = ({ project, userId }: { project: ProjectFullType; userId: number }): void => {
   if (!project.users.some(user => user.id === userId)) {
     throw new HttpError({ code: 400, message: 'User is not a member of this project.' });
   }
 };
 
-const checkUserIsAuthor = ({ userId, authorId }: { userId: number; authorId: number }) => {
+const checkUserIsAuthor = ({ userId, authorId }: { userId: number; authorId: number }): void => {
   if (userId !== authorId) {
     throw new HttpError({
       code: 400,
@@ -47,18 +37,18 @@ const checkUserIsAuthor = ({ userId, authorId }: { userId: number; authorId: num
   }
 };
 
-const checkAddedUser = ({ project, addedUserId }: { project: ProjectType; addedUserId: number }) => {
+const checkAddedUser = ({ project, addedUserId }: { project: ProjectFullType; addedUserId: number }): void => {
   if (project.users.some(user => user.id === addedUserId)) {
     throw new HttpError({ code: 400, message: 'User is already a member of this project.' });
   }
 };
-const checkRemovedUser = ({ project, removedUserId }: { project: ProjectType; removedUserId: number }) => {
+const checkRemovedUser = ({ project, removedUserId }: { project: ProjectFullType; removedUserId: number }): void => {
   if (!project.users.some(user => user.id === removedUserId)) {
     throw new HttpError({ code: 400, message: 'User is not a member of this project.' });
   }
 };
 
-const checkTaskExists = ({ project, taskId }: { project: ProjectType; taskId: number }) => {
+const checkTaskExists = ({ project, taskId }: { project: ProjectFullType; taskId: number }): TaskType => {
   const task = project.tasks.find(task => task.id === taskId);
 
   if (!task) throw new HttpError({ code: 404, message: 'Task not found.' });
@@ -66,7 +56,7 @@ const checkTaskExists = ({ project, taskId }: { project: ProjectType; taskId: nu
   return task;
 };
 
-const checkTaskStatus = ({ task, newStatus }: { task: TaskType; newStatus: TaskStatus }) => {
+const checkTaskStatus = ({ task, newStatus }: { task: TaskType; newStatus: TaskStatus }): TaskUpdateData => {
   const taskData: TaskUpdateData = { status: newStatus };
 
   if (newStatus === task.status) {
@@ -98,7 +88,7 @@ const checkTaskStatus = ({ task, newStatus }: { task: TaskType; newStatus: TaskS
   return taskData;
 };
 
-const checkUserIsInitiator = ({ iniciatorId, userId }: { iniciatorId: number | null; userId: number }) => {
+const checkUserIsInitiator = ({ iniciatorId, userId }: { iniciatorId: number | null; userId: number }): void => {
   if (iniciatorId !== userId) {
     throw new HttpError({
       code: 400,
@@ -107,7 +97,7 @@ const checkUserIsInitiator = ({ iniciatorId, userId }: { iniciatorId: number | n
   }
 };
 
-const checkUserIsPerformer = ({ performerId, userId }: { performerId: number | null; userId: number }) => {
+const checkUserIsPerformer = ({ performerId, userId }: { performerId: number | null; userId: number }): void => {
   if (performerId !== userId) {
     throw new HttpError({
       code: 400,
@@ -116,7 +106,7 @@ const checkUserIsPerformer = ({ performerId, userId }: { performerId: number | n
   }
 };
 
-const checkUserExists = async ({ tx, userId }: { tx: Prisma.TransactionClient; userId: number }) => {
+const checkUserExists = async ({ tx, userId }: { tx: Prisma.TransactionClient; userId: number }): Promise<void> => {
   const user = await tx.user.findUnique({
     where: { id: userId },
   });

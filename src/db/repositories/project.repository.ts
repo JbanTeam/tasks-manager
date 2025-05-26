@@ -1,13 +1,9 @@
 import { Project } from '@prisma/client';
 
 import prisma from '../prismaClient';
-import { ProjectType } from '@src/types';
-import {
-  DeleteProjectParams,
-  DeveloperTimeParams,
-  UserFromProjectParams,
-  UserToProjectParams,
-} from '@src/types/dbTypes';
+import { ProjectFullType } from '@src/types';
+import { projectFullSelect } from '../selects/project.select';
+import { DeleteProjectParams, DeveloperTimeParams, UserFromProjectParams, UserToProjectParams } from '@src/types';
 import {
   checkAddedUser,
   checkProjectExists,
@@ -17,44 +13,34 @@ import {
 } from '../checkExists';
 
 export class ProjectRepository {
-  getProject = async (projectId: number): Promise<ProjectType> => {
+  getProject = async (projectId: number): Promise<ProjectFullType> => {
     const project = await checkProjectExists({ tx: prisma, projectId });
 
     return project;
   };
-  getProjects = async () => {
-    return await prisma.project.findMany({ include: { tasks: true, users: { select: { id: true } } } });
+  getProjects = async (): Promise<ProjectFullType[]> => {
+    return await prisma.project.findMany({ select: projectFullSelect });
   };
 
-  projectsByUser = async (userId: number) => {
+  projectsByUser = async (userId: number): Promise<ProjectFullType[]> => {
     return await prisma.project.findMany({
       where: { users: { some: { id: { equals: userId } } } },
-      include: { tasks: { select: { status: true, performerId: true, performer: { select: { name: true } } } } },
+      select: projectFullSelect,
     });
   };
 
-  projectsForDevTime = async ({ devId, projectIds }: DeveloperTimeParams) => {
-    let projects: ProjectType[];
+  projectsForDevTime = async ({ devId, projectIds }: DeveloperTimeParams): Promise<ProjectFullType[]> => {
+    let projects: ProjectFullType[];
 
     if (projectIds?.length) {
       projects = await prisma.project.findMany({
         where: { id: { in: projectIds }, users: { some: { id: devId } } },
-        include: {
-          tasks: {
-            where: { performerId: devId },
-          },
-          users: { select: { id: true } },
-        },
+        select: projectFullSelect,
       });
     } else {
       projects = await prisma.project.findMany({
         where: { users: { some: { id: devId } } },
-        include: {
-          tasks: {
-            where: { performerId: devId },
-          },
-          users: { select: { id: true } },
-        },
+        select: projectFullSelect,
       });
     }
 
