@@ -2,7 +2,16 @@ services:
   app:
     build:
       target: development
+    container_name: tasks-dev-app
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     entrypoint: ['/bin/sh', '-c', '/usr/src/app/entrypoint.sh']
+
+  db:
+    container_name: tasks-dev-db
+    volumes:
+      - postgres_DEV_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_DEV_data:

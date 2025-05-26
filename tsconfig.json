@@ -11,6 +11,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "rootDir": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -25,7 +26,6 @@
     "resolveJsonModule": true,
     "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
-      "@modules/*": ["src/modules/*"],
       "@src/*": ["src/*"]
     }
   },
