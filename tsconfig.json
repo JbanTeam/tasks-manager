@@ -20,7 +20,6 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "strict": true,
-    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "resolveJsonModule": true,

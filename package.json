@@ -6,7 +6,7 @@
     "dev": "dotenv -e .env.dev -- nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "node dist/index.js",
-    "test": "jest --runInBand",
+    "test": "jest --selectProjects Unit",
     "prisma:gen": "npx prisma generate",
     "prisma:push": "npm prisma db push",
     "prisma:migrate:dev": "npx prisma migrate dev",

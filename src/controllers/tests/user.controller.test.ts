@@ -34,7 +34,7 @@ beforeEach(() => {
 describe('UserController', () => {
   describe('getAllUsers', () => {
     it('should return all users', async () => {
-      const users = [{ id: 1, name: 'John Doe' }] as UserFullType[];
+      const users = [{ id: 1, name: 'Vital' }] as UserFullType[];
       mockUserRepository.getUsers = jest.fn().mockResolvedValue(users);
 
       await userController.getAllUsers(mockRequest, mockResponse, mockNext);
@@ -44,8 +44,8 @@ describe('UserController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(users);
     });
 
-    it('should handle getAllUsers error', async () => {
-      const error = new Error('GetAllUsers Error');
+    it('should handle error when getting all users', async () => {
+      const error = new HttpError({ message: 'GetAllUsers Error' });
       mockUserRepository.getUsers = jest.fn().mockRejectedValue(error);
 
       await userController.getAllUsers(mockRequest, mockResponse, mockNext);
@@ -58,7 +58,7 @@ describe('UserController', () => {
     it('should sign up a new user', async () => {
       const tokens = { accessToken: 'access', refreshToken: 'refresh' };
       mockUserService.registerUser = jest.fn().mockResolvedValue(tokens);
-      mockRequest.body = { name: 'Vital', email: 'vital@mail.com', password: 'password', confirmPassword: 'password' };
+      mockRequest.body = { name: 'Vital', email: 'vital@mail.ru', password: 'password', confirmPassword: 'password' };
 
       await userController.signUp(mockRequest, mockResponse, mockNext);
 
@@ -67,10 +67,10 @@ describe('UserController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(tokens);
     });
 
-    it('should handle signUp error', async () => {
-      const error = new Error('SignUp Error');
+    it('should handle error when signing up', async () => {
+      const error = new HttpError({ message: 'SignUp Error' });
       mockUserService.registerUser = jest.fn().mockRejectedValue(error);
-      mockRequest.body = { name: 'Vital', email: 'vital@mail.com', password: 'password', confirmPassword: 'password' };
+      mockRequest.body = { name: 'Vital', email: 'vital@mail.ru', password: 'password', confirmPassword: 'password' };
 
       await userController.signUp(mockRequest, mockResponse, mockNext);
 
@@ -82,7 +82,7 @@ describe('UserController', () => {
     it('should sign in a user', async () => {
       const tokens = { accessToken: 'access', refreshToken: 'refresh' };
       mockUserService.loginUser = jest.fn().mockResolvedValue(tokens);
-      mockRequest.body = { email: 'john@example.com', password: 'password' };
+      mockRequest.body = { email: 'vital@mail.ru', password: 'password' };
 
       await userController.signIn(mockRequest, mockResponse, mockNext);
 
@@ -91,8 +91,8 @@ describe('UserController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(tokens);
     });
 
-    it('should handle signIn error', async () => {
-      const error = new Error('SignIn Error');
+    it('should handle error when signing in', async () => {
+      const error = new HttpError({ message: 'SignIn Error' });
       mockUserService.loginUser = jest.fn().mockRejectedValue(error);
       mockRequest.body = { email: 'vital@mail.ru', password: 'password' };
 
@@ -136,8 +136,8 @@ describe('UserController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({ accessToken });
     });
 
-    it('should handle updateAccessToken error', async () => {
-      const error = new Error('Update Access Token Error');
+    it('should handle error when updating access token', async () => {
+      const error = new HttpError({ message: 'Update Access Token Error' });
       mockUserService.getNewAccessToken = jest.fn().mockRejectedValue(error);
       mockRequest.body = { refreshToken: 'refresh' };
 
@@ -165,11 +165,11 @@ describe('UserController', () => {
       expect(mockResponse.json).toHaveBeenCalledWith(projectsTime);
     });
 
-    it('should handle getDeveloperTime error', async () => {
-      const error = new Error('Get Developer Time Error');
+    it('should handle error when getting developer time', async () => {
+      const error = new HttpError({ message: 'Get Developer Time Error' });
       mockUserService.getDeveloperTime = jest.fn().mockRejectedValue(error);
       mockRequest.params = { devId: '1' };
-      mockRequest.query = { timeFilter: 'all', projectIds: '1,2,3' };
+      mockRequest.query = { timeFilter: 'hour', projectIds: '1,2,3' };
 
       await userController.getDeveloperTime(
         mockRequest as Request<GetDevTimeParams, unknown, unknown, GetDevTimeQuery>,
@@ -185,13 +185,12 @@ describe('UserController', () => {
     it('should get a user by ID', async () => {
       const user = {
         id: 1,
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: 'Vital',
+        email: 'vital@mail.ru',
         password: 'hashedPassword',
         refreshToken: null,
-        tasks: [],
         projects: [],
-      }; // Adjusted to match UserFullType
+      };
       mockUserRepository.findUserById = jest.fn().mockResolvedValue(user);
       mockRequest.params = { userId: '1' };
 
@@ -212,8 +211,8 @@ describe('UserController', () => {
       expect(mockNext).toHaveBeenCalledWith(new HttpError({ code: 404, message: 'User not found' }));
     });
 
-    it('should handle getUser error', async () => {
-      const error = new Error('GetUser Error');
+    it('should handle error when getting user', async () => {
+      const error = new HttpError({ message: 'GetUser Error' });
       mockUserRepository.findUserById = jest.fn().mockRejectedValue(error);
       mockRequest.params = { userId: '1' };
 
