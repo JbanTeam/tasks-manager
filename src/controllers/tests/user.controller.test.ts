@@ -7,8 +7,8 @@ import { UserController } from '@src/controllers/user.controller';
 import { UserRepository } from '@src/db/repositories/user.repository';
 import { GetDevTimeParams, GetDevTimeQuery } from '@src/types/reqTypes';
 
-jest.mock('../../services/user.service');
-jest.mock('../../db/repositories/user.repository');
+jest.mock('@src/services/user.service');
+jest.mock('@src/db/repositories/user.repository');
 
 const mockUserService = new UserService() as jest.Mocked<UserService>;
 const mockUserRepository = new UserRepository() as jest.Mocked<UserRepository>;

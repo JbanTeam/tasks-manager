@@ -13,8 +13,8 @@ import {
   DeleteTaskParams,
 } from '@src/types/reqTypes';
 
-jest.mock('../../services/task.service');
-jest.mock('../../db/repositories/task.repository');
+jest.mock('@src/services/task.service');
+jest.mock('@src/db/repositories/task.repository');
 
 const mockTaskService = new TaskService() as jest.Mocked<TaskService>;
 
