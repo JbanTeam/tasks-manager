@@ -22,6 +22,12 @@ export type TaskType = Prisma.TaskGetPayload<{
   select: typeof taskSelect;
 }>;
 
+export type RegisterReturnType = {
+  accessToken: string;
+  refreshToken: string;
+  userId: number;
+};
+
 export type ProjectTimeType = {
   days: number;
   hours: number;
