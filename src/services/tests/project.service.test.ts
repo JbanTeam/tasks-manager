@@ -81,7 +81,6 @@ describe('ProjectService', () => {
   describe('initProject', () => {
     const initProjectBody: InitProjectBody = { title: 'Project', description: 'Description' };
     const req = { user: mockUser, body: initProjectBody } as Request<unknown, unknown, InitProjectBody>;
-    console.log('req', req);
 
     it('should initialize a project', async () => {
       const newProject = { id: 1, ...initProjectBody, authorId: mockUser.userId } as Project;

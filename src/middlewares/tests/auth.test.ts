@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+
 import auth from '../auth';
-import { JWT_SECRET } from '../../constants';
-import HttpError from '../../errors/HttpError';
-import { DecodedUser } from '../../types';
+import HttpError from '@src/errors/HttpError';
+import { DecodedUser } from '@src/types/reqTypes';
 
 jest.mock('jsonwebtoken');
 
@@ -22,7 +22,7 @@ describe('Auth Middleware', () => {
     next = jest.fn();
   });
 
-  test('Must return 401, if no authorization token', () => {
+  it('should throw an error if no authorization token', () => {
     auth(req, res, next);
 
     expect(next).toHaveBeenCalledWith(expect.any(HttpError));
@@ -30,7 +30,7 @@ describe('Auth Middleware', () => {
     expect(next.mock.calls[0][0]).toHaveProperty('errors', [{ message: 'Unauthorized.', context: {} }]);
   });
 
-  test('Must return 401, if token invalid', () => {
+  it('should throw an error if token invalid', () => {
     req.headers.authorization = 'Bearer invalidToken';
     (jwt.verify as jest.Mock).mockImplementation(() => {
       throw new HttpError({ code: 401, message: 'Unauthorized.' });
@@ -43,7 +43,7 @@ describe('Auth Middleware', () => {
     expect(next.mock.calls[0][0]).toHaveProperty('errors', [{ message: 'Unauthorized.', context: {} }]);
   });
 
-  test('Must decode token and set req.user successfully', () => {
+  it('should decode token and set req.user successfully', () => {
     const mockUser: DecodedUser = { userId: 1, email: 'vital@mail.ru' };
     req.headers.authorization = 'Bearer validToken';
     (jwt.verify as jest.Mock).mockReturnValue(mockUser);
@@ -55,7 +55,7 @@ describe('Auth Middleware', () => {
     expect(next).toHaveBeenCalledWith();
   });
 
-  test('Must return 401, if token decoded, but not contains userId', () => {
+  it('should throw an error if token decoded, but not contains userId', () => {
     req.headers.authorization = 'Bearer valid_token';
     (jwt.verify as jest.Mock).mockReturnValue({ email: 'vital@mail.ru' });
 
