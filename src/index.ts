@@ -1,13 +1,13 @@
-import express from 'express';
-import http from 'http';
 import dotenv from 'dotenv';
-import bodyParser from 'body-parser';
+import http from 'http';
 import morgan from 'morgan';
+import express from 'express';
+import bodyParser from 'body-parser';
 
+import { port } from './constants';
 import routes from './routes/routes';
 import prisma from './db/prismaClient';
 import errorHandler from './middlewares/errors';
-import { port } from './constants';
 
 dotenv.config();
 
@@ -24,9 +24,11 @@ app.use('/api', routes(router));
 
 app.use(errorHandler);
 
-process.on('SIGINT', async () => {
-  await prisma.$disconnect();
-  process.exit(0);
+process.on('SIGINT', () => {
+  (async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+  })();
 });
 
 server.listen(port, () => {

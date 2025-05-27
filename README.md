@@ -1,22 +1,38 @@
 # Tasks Manager
 
-Tasks Manager написан с использованием TypeScript, Express.js, Prisma ORM, Docker, Docker Compose.
-Для тестирования эндпоинтов в папке проекта есть test.rest файл, для расширения VsCode [Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
-Или [Postman коллекция](https://www.postman.com/vitalalex/vital-alex/collection/tnenzn9/tasks-manager-api?action=share&creator=9639295)
+Tasks Manager — это система управления проектами и задачами с поддержкой многопользовательской работы. Пользователь может создавать проекты, добавлять в них других пользователей, инициировать задачи и назначать исполнителей. Основной стек: TypeScript, Express.js, PostgreSQL, Prisma ORM, Docker, Jest.
 
 ---
 
-## Функциональность
+## Возможности системы
 
-- Регистрация/вход пользователя.
-- Добавление/удаление проекта.
-- Добавление/удаление пользователя в проект.
-- Добавление/удаление задачи в проект.
-- Назначение задачи исполнителю.
-- Изменение статуса задачи.
-- Просмотр своих проектов и связанных с ними задач.
-- Просмотр времени, затраченного на проект всеми разработчиками с фильтрацией по периоду времени.
-- Просмотр времени работы конкретного разработчика с фильтрацией по проектам и периоду времени.
+1. Регистрация и аутентификация
+
+- Регистрация нового пользователя
+- Авторизация с выдачей access и refresh токенов
+- Обновление access токена
+- Выход пользователя (аннулирование refresh-токена)
+
+2. Управление проектами
+
+- Создание проекта
+- Удаление проекта
+- Добавление участников в проект
+- Удаление участников из проекта
+- Просмотр проектов, в которых участвует пользователь
+
+3. Управление задачами
+
+- Создание задачи в рамках проекта(может любой участник проекта)
+- Удаление задачи
+- Назначение исполнителя (инициатор задачи назначает исполнителем себя или другого участника проекта)
+- Изменение статуса задачи (CREATED(по-умолчанию), IN_PROGRESS, DONE)
+- Просмотр задач по проектам и исполнителям
+
+4. Аналитика времени
+
+- Просмотр времени, затраченного всеми участниками на проект с фильтрацией по периоду
+- Просмотр времени, затраченного конкретным пользователем, с фильтрацией по проектам и дате
 
 ---
 
@@ -57,19 +73,25 @@ npm run prisma:gen
 - **в dev режиме**
 
 ```bash
-npm run dc:cmp:dev
+npm run dc:cmp:devb
 ```
 
 - **в prod режиме**
 
 ```bash
-npm run dc:cmp:prod
+npm run dc:cmp:prodb
 ```
 
-6. Сделайте первую миграцию базы данных:
+6. Создайте и примените миграцию базы данных(начальная миграция в проекте имеется, она будет применена автоматически):
 
 ```bash
-npm run dc:prisma:migrate -- --name init
+npm run dc:prisma:migrate -- --name {migration_name}
+```
+
+7. Остановка и удаление контейнера:
+
+```bash
+npm run dc:cmp:down
 ```
 
 ### Команды
@@ -80,20 +102,22 @@ npm run dc:prisma:migrate -- --name init
 npm run test
 ```
 
-1. Запуск тестов по файлам:
+2. Запуск тестов по файлам:
 
 ```bash
-npm run test -- src/controllers/tests/userController.test.ts
+npm run test -- --testPathPattern=src/middlewares/tests/auth.test.ts
+npm run test -- --testPathPattern=src/controllers/tests/user.controller.test.ts
+npm run test -- --testPathPattern=src/services/tests/user.service.test.ts
+npm run test -- --testPathPattern=src/controllers/tests/project.controller.test.ts
+npm run test -- --testPathPattern=src/services/tests/project.service.test.ts
+npm run test -- --testPathPattern=src/controllers/tests/task.controller.test.ts
+npm run test -- --testPathPattern=src/services/tests/task.service.test.ts
 ```
 
-```bash
-npm run test -- src/controllers/tests/projectController.test.ts
-```
+## Тестирование API
 
-```bash
-npm run test -- src/controllers/tests/taskController.test.ts
-```
+В папке проекта находится файл test.rest для расширения Rest Client в VSCode:
+[Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 
-```bash
-npm run test -- src/middlewares/tests/auth.test.ts
-```
+Или используйте готовую коллекцию в Postman:
+[Postman коллекция](https://www.postman.com/vitalalex/vital-alex/collection/tnenzn9/tasks-manager-api?action=share&creator=9639295)

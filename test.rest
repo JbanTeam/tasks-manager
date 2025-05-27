@@ -1,8 +1,8 @@
 @hostname = localhost
 @port = 5000
 @baseUrl = http://{{hostname}}:{{port}}/api
-@accessToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODEyMjMwNywiZXhwIjoxNzQ4MTIyNjA3fQ.WM0HhG4cur-8mLPIcHsO528JM-Gy0ZsvvN3il6NmkMw
-@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODEyMjMwNywiZXhwIjoxNzQ4NzI3MTA3fQ.iNnYbCG9Mz33-GKoShbPuTh75dFRwLGE2HMl6KehqO4
+@accessToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODM0NTI2MCwiZXhwIjoxNzQ4MzQ4ODYwfQ.M-momJSpix7ogVUDIWIXXOy2QCHNVgR49Ou1iKtwcSQ
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODM0NTI2MCwiZXhwIjoxNzQ4OTUwMDYwfQ.VpUn3shVLu0nGMLoJgVlprBVbazhlAz8FMwapqrtMsw
 
 ### USERS ************************************************
 ### USERS ************************************************
@@ -84,7 +84,7 @@ content-type: application/json
 Authorization: {{accessToken}}
 
 {
-  "removedUserId": 2
+  "removedUserId": 1
 }
 
 ### Delete project
