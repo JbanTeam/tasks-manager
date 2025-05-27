@@ -3,12 +3,11 @@ import { ValidationError } from 'joi';
 import { Prisma } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 
-import { CustomError } from '../errors/CustomError';
+import HttpError from '@src/errors/HttpError';
 
 const errorHandler = (err: Error, _req: Request, res: Response, next: NextFunction) => {
   void next;
-
-  if (err instanceof CustomError) {
+  if (err instanceof HttpError) {
     const { statusCode, errors, logging } = err;
     if (logging) {
       console.error(JSON.stringify({ code: err.statusCode, errors: err.errors, stack: err.stack }, null, 2));
