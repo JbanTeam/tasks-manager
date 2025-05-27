@@ -56,7 +56,7 @@ describe('UserController', () => {
 
   describe('signUp', () => {
     it('should sign up a new user', async () => {
-      const tokens = { accessToken: 'access', refreshToken: 'refresh' };
+      const tokens = { accessToken: 'access', refreshToken: 'refresh', userId: 1 };
       mockUserService.registerUser = jest.fn().mockResolvedValue(tokens);
       mockRequest.body = { name: 'Vital', email: 'vital@mail.ru', password: 'password', confirmPassword: 'password' };
 
@@ -80,7 +80,7 @@ describe('UserController', () => {
 
   describe('signIn', () => {
     it('should sign in a user', async () => {
-      const tokens = { accessToken: 'access', refreshToken: 'refresh' };
+      const tokens = { accessToken: 'access', refreshToken: 'refresh', userId: 1 };
       mockUserService.loginUser = jest.fn().mockResolvedValue(tokens);
       mockRequest.body = { email: 'vital@mail.ru', password: 'password' };
 
