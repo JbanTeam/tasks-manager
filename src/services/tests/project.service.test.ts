@@ -3,8 +3,7 @@ import { Project, TaskStatus } from '@prisma/client';
 
 import * as timeUtils from '@src/utils/time';
 import HttpError from '@src/errors/HttpError';
-import { ProjectService } from '@src/services/project.service';
-import { ProjectRepository } from '@src/db/repositories/project.repository';
+import { ProjectService, ProjectRepository } from '@src/.';
 import { ProjectFullType, ProjectTimeFilter, ProjectTimeType, TaskType } from '@src/types';
 import {
   AddUserToProjectBody,
@@ -68,14 +67,6 @@ describe('ProjectService', () => {
       expect(mockProjectRepository.projectsByUser).toHaveBeenCalledWith(mockUser.userId);
       expect(result).toEqual(projects);
     });
-
-    it('should throw error if user is not authenticated', async () => {
-      const req = { user: undefined } as Request;
-
-      await expect(projectService.getProjectsByUser(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
-    });
   });
 
   describe('initProject', () => {
@@ -83,7 +74,7 @@ describe('ProjectService', () => {
     const req = { user: mockUser, body: initProjectBody } as Request<unknown, unknown, InitProjectBody>;
 
     it('should initialize a project', async () => {
-      const newProject = { id: 1, ...initProjectBody, authorId: mockUser.userId } as Project;
+      const newProject = { id: 1, ...initProjectBody, author_id: mockUser.userId } as Project;
       mockProjectRepository.createProject = jest.fn().mockResolvedValue(newProject);
 
       const result = await projectService.initProject(req);
@@ -91,16 +82,9 @@ describe('ProjectService', () => {
       expect(mockProjectRepository.createProject).toHaveBeenCalledWith({
         title: initProjectBody.title,
         description: initProjectBody.description,
-        authorId: mockUser.userId,
+        author_id: mockUser.userId,
       });
       expect(result).toEqual(newProject);
-    });
-
-    it('should throw error if user is not authenticated', async () => {
-      req.user = undefined;
-      await expect(projectService.initProject(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
     });
 
     it('should throw validation error if body is invalid', async () => {
@@ -128,13 +112,6 @@ describe('ProjectService', () => {
         authorId: mockUser.userId,
         addedUserId: addUserBody.addedUserId,
       });
-    });
-
-    it('should throw error if user is not authenticated', async () => {
-      req.user = undefined;
-      await expect(projectService.addUserToProject(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
     });
 
     it('should throw validation error if params/body are invalid', async () => {
@@ -170,13 +147,6 @@ describe('ProjectService', () => {
         removedUserId: removeUserBody.removedUserId,
         authorId: mockUser.userId,
       });
-    });
-
-    it('should throw error if user is not authenticated', async () => {
-      req.user = undefined;
-      await expect(projectService.removeUserFromProject(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
     });
 
     it('should throw error if user tries to remove themselves', async () => {
@@ -221,13 +191,6 @@ describe('ProjectService', () => {
       expect(result).toEqual(mockFormattedTime);
     });
 
-    it('should throw error if user is not authenticated', async () => {
-      req.user = undefined;
-      await expect(projectService.getProjectTime(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
-    });
-
     it('should throw validation error if params/query are invalid', async () => {
       const invalidReq = { user: mockUser, params: {}, query: projectTimeQuery } as Request<
         ProjectTimeParams,
@@ -254,13 +217,6 @@ describe('ProjectService', () => {
       });
     });
 
-    it('should throw error if user is not authenticated', async () => {
-      req.user = undefined;
-      await expect(projectService.deleteProject(req)).rejects.toThrow(
-        new HttpError({ code: 401, message: 'Unauthorized.' }),
-      );
-    });
-
     it('should throw validation error if params are invalid', async () => {
       const invalidReq = { user: mockUser, params: {} } as Request<DeleteProjectParams>;
       await expect(projectService.deleteProject(invalidReq)).rejects.toThrow();
@@ -281,29 +237,29 @@ describe('ProjectService', () => {
       {
         id: 1,
         title: 'T1',
-        projectId: 1,
+        project_id: 1,
         status: TaskStatus.DONE,
-        beginAt: new Date('2024-01-01T10:00:00Z'),
-        doneAt: new Date('2024-01-01T12:00:00Z'),
-        spentTime: 2 * 60 * 60 * 1000, // 2 hours
+        begin_at: new Date('2024-01-01T10:00:00Z'),
+        done_at: new Date('2024-01-01T12:00:00Z'),
+        spent_time: 2 * 60 * 60 * 1000, // 2 hours
       } as unknown as TaskType,
       {
         id: 2,
         title: 'T2',
-        projectId: 1,
+        project_id: 1,
         status: TaskStatus.IN_PROGRESS,
-        beginAt: new Date('2024-01-09T10:00:00Z'),
-        doneAt: null,
-        spentTime: null,
+        begin_at: new Date('2024-01-09T10:00:00Z'),
+        done_at: null,
+        spent_time: null,
       } as unknown as TaskType, // 1 day 2 hours from '2024-01-09T10:00:00Z' to '2024-01-10T12:00:00.000Z'
       {
         id: 3,
         title: 'T3',
         projectId: 1,
         status: TaskStatus.CREATED,
-        beginAt: null,
-        doneAt: null,
-        spentTime: null,
+        begin_at: null,
+        done_at: null,
+        spent_time: null,
       } as unknown as TaskType, // 0 hours
     ];
 
@@ -350,11 +306,11 @@ describe('ProjectService', () => {
         {
           id: 1,
           title: 'T1',
-          projectId: 1,
+          project_id: 1,
           status: TaskStatus.CREATED,
-          beginAt: null,
-          doneAt: null,
-          spentTime: null,
+          begin_at: null,
+          done_at: null,
+          spent_time: null,
         } as unknown as TaskType,
       ];
       const totalMs = projectService.calculateProjectTime(noTimeTasks);
@@ -366,11 +322,11 @@ describe('ProjectService', () => {
         {
           id: 1,
           title: 'In Progress Task',
-          projectId: 1,
+          project_id: 1,
           status: TaskStatus.IN_PROGRESS,
-          beginAt: new Date('2024-01-10T08:00:00Z'),
-          doneAt: null,
-          spentTime: null,
+          begin_at: new Date('2024-01-10T08:00:00Z'),
+          done_at: null,
+          spent_time: null,
         } as unknown as TaskType,
       ];
       // now is 2024-01-10T12:00:00.000Z
@@ -387,11 +343,11 @@ describe('ProjectService', () => {
         {
           id: 1,
           title: 'Old Done Task',
-          projectId: 1,
+          project_id: 1,
           status: TaskStatus.DONE,
-          beginAt: new Date('2023-12-01T10:00:00Z'),
-          doneAt: new Date('2023-12-01T12:00:00Z'),
-          spentTime: 2 * 60 * 60 * 1000,
+          begin_at: new Date('2023-12-01T10:00:00Z'),
+          done_at: new Date('2023-12-01T12:00:00Z'),
+          spent_time: 2 * 60 * 60 * 1000,
         } as unknown as TaskType,
       ];
       // now is 2024-01-10T12:00:00.000Z

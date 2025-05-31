@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import HttpError from '@src/errors/HttpError';
-import { TaskService } from '@src/services/task.service';
-import { TaskController } from '@src/controllers/task.controller';
+import { TaskController, TaskService } from '@src/.';
 import {
   AddTaskParams,
   AddTaskBody,

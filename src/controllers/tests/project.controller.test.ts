@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Project } from '@prisma/client';
 
 import HttpError from '@src/errors/HttpError';
-import { ProjectService } from '@src/services/project.service';
-import { ProjectController } from '@src/controllers/project.controller';
+import { ProjectController, ProjectService } from '@src/.';
 import { ProjectFullType, ProjectTimeType } from '@src/types';
 import {
   AddUserToProjectBody,

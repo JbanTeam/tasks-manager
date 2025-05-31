@@ -2,10 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 import { UserFullType } from '@src/types';
 import HttpError from '@src/errors/HttpError';
-import { UserService } from '@src/services/user.service';
-import { UserController } from '@src/controllers/user.controller';
-import { UserRepository } from '@src/db/repositories/user.repository';
 import { GetDevTimeParams, GetDevTimeQuery } from '@src/types/reqTypes';
+import { UserController, UserService, UserRepository } from '@src/.';
 
 jest.mock('@src/services/user.service');
 jest.mock('@src/db/repositories/user.repository');

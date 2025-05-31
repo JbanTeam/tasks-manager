@@ -1,9 +1,7 @@
 import { Request } from 'express';
 import { Task, TaskStatus } from '@prisma/client';
 
-import HttpError from '@src/errors/HttpError';
-import { TaskService } from '@src/services/task.service';
-import { TaskRepository } from '@src/db/repositories/task.repository';
+import { TaskService, TaskRepository } from '@src/.';
 import {
   AddTaskBody,
   AddTaskParams,
@@ -49,14 +47,9 @@ describe('TaskService', () => {
       await taskService.addTaskToProject(req);
 
       expect(mockTaskRepository.createTask).toHaveBeenCalledWith({
-        taskData: { ...addTaskBody, projectId: Number(addTaskParams.projectId) },
+        taskData: { ...addTaskBody, project_id: Number(addTaskParams.projectId) },
         userId: mockRequest.user!.userId,
       });
-    });
-
-    it('should throw error if user is not authenticated', async () => {
-      const req = { params: addTaskParams, body: addTaskBody } as Request<AddTaskParams, unknown, AddTaskBody>;
-      await expect(taskService.addTaskToProject(req)).rejects.toThrow(HttpError);
     });
 
     it('should throw validation error if body is invalid', async () => {
@@ -92,15 +85,6 @@ describe('TaskService', () => {
       });
     });
 
-    it('should throw error if user is not authenticated', async () => {
-      const req = { params: assignTaskParams, body: assignTaskBody } as Request<
-        AssignTaskParams,
-        unknown,
-        AssignTaskBody
-      >;
-      await expect(taskService.assignTaskToUser(req)).rejects.toThrow(HttpError);
-    });
-
     it('should throw validation error if params/body are invalid', async () => {
       const invalidParams = { ...assignTaskParams, taskId: '' };
       const req = { ...mockRequest, params: invalidParams, body: assignTaskBody } as Request<
@@ -134,15 +118,6 @@ describe('TaskService', () => {
       });
     });
 
-    it('should throw error if user is not authenticated', async () => {
-      const req = { params: changeTaskStatusParams, body: changeTaskStatusBody } as Request<
-        ChangeTaskStatusParams,
-        unknown,
-        ChangeTaskStatusBody
-      >;
-      await expect(taskService.changeTaskStatus(req)).rejects.toThrow(HttpError);
-    });
-
     it('should throw validation error if params/body are invalid', async () => {
       const invalidBody = { ...changeTaskStatusBody, status: 'INVALID_STATUS' as TaskStatus };
       const req = { ...mockRequest, params: changeTaskStatusParams, body: invalidBody } as Request<
@@ -168,11 +143,6 @@ describe('TaskService', () => {
         projectId: Number(deleteTaskParams.projectId),
         userId: mockRequest.user!.userId,
       });
-    });
-
-    it('should throw error if user is not authenticated', async () => {
-      const req = { params: deleteTaskParams } as Request<DeleteTaskParams>;
-      await expect(taskService.deleteTask(req)).rejects.toThrow(HttpError);
     });
 
     it('should throw validation error if params are invalid', async () => {

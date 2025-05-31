@@ -1,15 +1,12 @@
 import bcrypt from 'bcrypt';
-import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { Request } from 'express';
 import { User } from '@prisma/client';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 
 import HttpError from '@src/errors/HttpError';
 import { ProjectTimeFilter } from '@src/types';
-import { UserService } from '@src/services/user.service';
-import { ProjectService } from '@src/services/project.service';
-import { UserRepository } from '@src/db/repositories/user.repository';
-import { ProjectRepository } from '@src/db/repositories/project.repository';
 import { JWT_REFRESH_SECRET, JWT_SECRET } from '@src/constants';
+import { UserService, UserRepository, ProjectService, ProjectRepository } from '@src/.';
 import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RefreshTokenBody, RegisterBody } from '@src/types/reqTypes';
 
 jest.mock('bcrypt');
@@ -144,7 +141,7 @@ describe('UserService', () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
     const refreshTokenBody: RefreshTokenBody = { refreshToken };
     const decodedUser = { userId: 1, email: 'vital@mail.ru' };
-    const mockUser = { id: 1, email: 'vital@mail.ru', refreshToken } as User;
+    const mockUser = { id: 1, email: 'vital@mail.ru', refresh_token: refreshToken } as User;
     const newAccessToken = 'new-access-token';
 
     it('should return a new access token', async () => {
@@ -169,7 +166,7 @@ describe('UserService', () => {
 
     it('should throw error if refresh token is invalid', async () => {
       (userService as any).verifyRefreshToken = jest.fn().mockReturnValue(decodedUser);
-      mockUserRepository.findUserById.mockResolvedValue({ ...mockUser, refreshToken: 'different-token' } as User);
+      mockUserRepository.findUserById.mockResolvedValue({ ...mockUser, refresh_token: 'different-token' } as User);
 
       await expect(userService.getNewAccessToken(refreshTokenBody)).rejects.toThrow(HttpError);
     });

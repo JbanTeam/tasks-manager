@@ -1,8 +1,8 @@
 @hostname = localhost
 @port = 5000
 @baseUrl = http://{{hostname}}:{{port}}/api
-@accessToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODM0NTI2MCwiZXhwIjoxNzQ4MzQ4ODYwfQ.M-momJSpix7ogVUDIWIXXOy2QCHNVgR49Ou1iKtwcSQ
-@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODM0NTI2MCwiZXhwIjoxNzQ4OTUwMDYwfQ.VpUn3shVLu0nGMLoJgVlprBVbazhlAz8FMwapqrtMsw
+@accessToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODcyMjM1MiwiZXhwIjoxNzQ4NzI1OTUyfQ.oes6qoUUvI0ocHdD0ziLbcnlqEXzFD0vNtjANKiQRnQ
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoianRAbWFpbC5ydSIsImlhdCI6MTc0ODcyMjM1MiwiZXhwIjoxNzQ5MzI3MTUyfQ.de539wmIRGrXJvO0uWwLB4jtjUfpextycnlF4zRJpLY
 
 ### USERS ************************************************
 ### USERS ************************************************
