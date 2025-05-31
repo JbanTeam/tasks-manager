@@ -5,7 +5,7 @@ import { rmSync } from 'fs';
 rmSync('dist', { recursive: true, force: true });
 
 await build({
-  entryPoints: ['src/index.ts'],
+  entryPoints: ['src/app.ts'],
   bundle: true,
   platform: 'node',
   target: 'node20',
