@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { TaskService } from '@src/services/task.service';
+import { TaskService } from '@src/.';
 import {
   AddTaskBody,
   AddTaskParams,

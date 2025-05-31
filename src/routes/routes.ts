@@ -2,9 +2,7 @@ import { Router } from 'express';
 
 import authMiddleware from '../middlewares/auth';
 import { catchAsync } from '@src/utils/catchAsync';
-import { UserController } from '../controllers/user.controller';
-import { ProjectController } from '@src/controllers/project.controller';
-import { TaskController } from '../controllers/task.controller';
+import { ProjectController, UserController, TaskController } from '@src/.';
 
 const userController = new UserController();
 const projectController = new ProjectController();

@@ -3,13 +3,11 @@ import jwt from 'jsonwebtoken';
 import { Request } from 'express';
 
 import HttpError from '@src/errors/HttpError';
-import { ProjectService } from './project.service';
 import { formatMilliseconds } from '@src/utils/time';
 import { DeveloperTimeReturnType } from '@src/types';
-import { UserRepository } from '@src/db/repositories/user.repository';
-import { ProjectRepository } from '@src/db/repositories/project.repository';
 import { JWT_REFRESH_SECRET, JWT_SECRET } from '@src/constants';
 import { ProjectTimeFilter, RegisterReturnType } from '@src/types';
+import { ProjectService, UserRepository, ProjectRepository } from '@src/.';
 import { getDeveloperTimeSchema, loginSchema, registrationSchema, updateAccessSchema } from '@src/utils/validation';
 import {
   DecodedUser,
@@ -33,6 +31,7 @@ export class UserService {
 
   registerUser = async (body: RegisterBody): Promise<RegisterReturnType> => {
     const { name, email, password } = body;
+
     const { error } = registrationSchema.validate(body);
     if (error) throw error;
 
@@ -62,10 +61,12 @@ export class UserService {
     if (!user) {
       throw new HttpError({ code: 401, message: 'Invalid credentials.' });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new HttpError({ code: 401, message: 'Invalid credentials.' });
     }
+
     const tokens = this.generateTokens(user.id, user.email);
     await this.userRepository.updateRefreshToken({ userId: user.id, refreshToken: tokens.refreshToken });
     return { userId: user.id, ...tokens };
@@ -83,6 +84,7 @@ export class UserService {
     if (!user) {
       throw new HttpError({ code: 404, message: 'User not found' });
     }
+
     if (user.refreshToken !== refreshToken) {
       throw new HttpError({ code: 401, message: 'Invalid refresh token' });
     }
@@ -95,10 +97,12 @@ export class UserService {
   ): Promise<DeveloperTimeReturnType[]> => {
     const { devId } = req.params;
     const { timeFilter, projectIds } = req.query;
+
     const ids = projectIds !== undefined ? projectIds.toString().split(',').map(Number) : [];
 
     const { error: queryError } = getDeveloperTimeSchema.query.validate(req.query);
     if (queryError) throw queryError;
+
     const { error: paramsError } = getDeveloperTimeSchema.params.validate(req.params);
     if (paramsError) throw paramsError;
 
@@ -115,6 +119,7 @@ export class UserService {
         timeSpent: formatMilliseconds(projectMsTime),
       };
     });
+
     return mappedProjects;
   };
 

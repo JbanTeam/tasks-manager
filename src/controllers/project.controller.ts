@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { ProjectService } from '../services/project.service';
+import { ProjectService } from '@src/.';
 import {
   AddUserToProjectBody,
   AddUserToProjectParams,

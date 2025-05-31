@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import HttpError from '../errors/HttpError';
-import { UserService } from '@src/services/user.service';
-import { UserRepository } from '../db/repositories/user.repository';
+import { UserService, UserRepository } from '@src/.';
 import { GetDevTimeParams, GetDevTimeQuery, LoginBody, RefreshTokenBody, RegisterBody } from '@src/types/reqTypes';
 
 export class UserController {
