@@ -4,8 +4,8 @@ export const projectLiteSelect = {
   id: true,
   title: true,
   description: true,
-  authorId: true,
-  createdAt: true,
+  author_id: true,
+  created_at: true,
 };
 
 export const projectWithUsersSelect = {

@@ -85,7 +85,7 @@ export class UserService {
       throw new HttpError({ code: 404, message: 'User not found' });
     }
 
-    if (user.refreshToken !== refreshToken) {
+    if (user.refresh_token !== refreshToken) {
       throw new HttpError({ code: 401, message: 'Invalid refresh token' });
     }
 

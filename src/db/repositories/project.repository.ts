@@ -47,25 +47,25 @@ export class ProjectRepository {
     return projects;
   };
 
-  createProject = async (projectData: Pick<Project, 'title' | 'description' | 'authorId'>): Promise<Project> => {
+  createProject = async (projectData: Pick<Project, 'title' | 'description' | 'author_id'>): Promise<Project> => {
     return await prisma.project.create({
-      data: { ...projectData, users: { connect: { id: projectData.authorId } } },
+      data: { ...projectData, users: { connect: { id: projectData.author_id } } },
     });
   };
 
   deleteProject = async ({ projectId, authorId }: DeleteProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
-      checkUserIsAuthor({ userId: project.authorId, authorId });
+      checkUserIsAuthor({ userId: project.author_id, authorId });
 
       if (project.tasks.length) {
         await tx.task.deleteMany({
-          where: { projectId },
+          where: { project_id: projectId },
         });
       }
 
       await tx.project.delete({
-        where: { id: projectId, authorId },
+        where: { id: projectId, author_id: authorId },
       });
     });
   };
@@ -73,7 +73,7 @@ export class ProjectRepository {
   addUserToPoject = async ({ projectId, authorId, addedUserId }: UserToProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
-      checkUserIsAuthor({ userId: project.authorId, authorId });
+      checkUserIsAuthor({ userId: project.author_id, authorId });
 
       await checkUserExists({ tx, userId: addedUserId });
       checkAddedUser({ project, addedUserId });
@@ -88,7 +88,7 @@ export class ProjectRepository {
   removeUserFromPoject = async ({ projectId, authorId, removedUserId }: UserFromProjectParams): Promise<void> => {
     return await prisma.$transaction(async tx => {
       const project = await checkProjectExists({ tx, projectId });
-      checkUserIsAuthor({ userId: project.authorId, authorId });
+      checkUserIsAuthor({ userId: project.author_id, authorId });
 
       await checkUserExists({ tx, userId: removedUserId });
       checkRemovedUser({ project, removedUserId });

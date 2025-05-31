@@ -47,7 +47,7 @@ export type ProjectTimeParams = { projectId: number; timeFilter?: ProjectTimeFil
 export type DeleteProjectParams = { projectId: number; authorId: number };
 
 export type CreateTaskData = {
-  taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'projectId'>;
+  taskData: Pick<Task, 'title' | 'description' | 'deadline' | 'project_id'>;
   userId: number;
 };
 

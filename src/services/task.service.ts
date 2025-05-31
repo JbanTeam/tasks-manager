@@ -28,7 +28,7 @@ export class TaskService {
     if (error) throw error;
 
     await this.taskRepository.createTask({
-      taskData: { title, description, deadline, projectId: Number(projectId) },
+      taskData: { title, description, deadline, project_id: Number(projectId) },
       userId: user!.userId,
     });
   };

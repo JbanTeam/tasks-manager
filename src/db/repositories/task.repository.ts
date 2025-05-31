@@ -15,11 +15,11 @@ import {
 export class TaskRepository {
   createTask = async ({ taskData, userId }: CreateTaskData): Promise<Task> => {
     return await prisma.$transaction(async tx => {
-      const project = await checkProjectExists({ tx, projectId: taskData.projectId });
+      const project = await checkProjectExists({ tx, projectId: taskData.project_id });
       checkUserMembership({ project, userId });
 
       return await tx.task.create({
-        data: { ...taskData, iniciatorId: userId },
+        data: { ...taskData, iniciator_id: userId },
       });
     });
   };
@@ -33,11 +33,11 @@ export class TaskRepository {
       checkUserMembership({ project, userId: performerId });
 
       const task = checkTaskExists({ project, taskId });
-      checkUserIsInitiator({ iniciatorId: task.iniciatorId, userId });
+      checkUserIsInitiator({ iniciatorId: task.iniciator_id, userId });
 
       return await tx.task.update({
         where: { id: taskId },
-        data: { performerId },
+        data: { performer_id: performerId },
       });
     });
   };
@@ -48,7 +48,7 @@ export class TaskRepository {
       checkUserMembership({ project, userId });
 
       const task = checkTaskExists({ project, taskId });
-      checkUserIsPerformer({ performerId: task.performerId, userId });
+      checkUserIsPerformer({ performerId: task.performer_id, userId });
 
       const taskData = checkTaskStatus({ task, newStatus });
 
@@ -65,7 +65,7 @@ export class TaskRepository {
       checkUserMembership({ project, userId });
 
       const task = checkTaskExists({ project, taskId });
-      checkUserIsInitiator({ iniciatorId: task.iniciatorId, userId });
+      checkUserIsInitiator({ iniciatorId: task.iniciator_id, userId });
 
       return await tx.task.delete({
         where: { id: taskId },

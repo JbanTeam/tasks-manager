@@ -8,48 +8,48 @@ generator client {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  email            String    @unique
-  password         String
-  name             String
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  refreshToken     String?
-  authoredProjects Project[] @relation("ProjectAuthor")
-  projects         Project[] @relation("ProjectUsers")
-  initiatedTasks   Task[]    @relation("TaskIniciator")
-  performedTasks   Task[]    @relation("TaskPerformer")
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  name              String
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  refresh_token     String?
+  authored_projects Project[] @relation("ProjectAuthor")
+  projects          Project[] @relation("ProjectUsers")
+  initiated_tasks   Task[]    @relation("TaskIniciator")
+  performed_tasks   Task[]    @relation("TaskPerformer")
 }
 
 model Project {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  author      User     @relation("ProjectAuthor", fields: [authorId], references: [id])
-  authorId    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  author      User     @relation("ProjectAuthor", fields: [author_id], references: [id])
+  author_id   Int
   users       User[]   @relation("ProjectUsers")
   tasks       Task[]
 }
 
 model Task {
-  id          Int        @id @default(autoincrement())
-  title       String
-  description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  beginAt     DateTime?
-  doneAt      DateTime?
-  status      TaskStatus @default(CREATED)
-  project     Project    @relation(fields: [projectId], references: [id])
-  projectId   Int
-  performer   User?      @relation("TaskPerformer", fields: [performerId], references: [id])
-  performerId Int?
-  iniciator   User?      @relation("TaskIniciator", fields: [iniciatorId], references: [id])
-  iniciatorId Int?
-  deadline    DateTime
-  spentTime   Int?
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  begin_at     DateTime?
+  done_at      DateTime?
+  status       TaskStatus @default(CREATED)
+  project      Project    @relation(fields: [project_id], references: [id])
+  project_id   Int
+  performer    User?      @relation("TaskPerformer", fields: [performer_id], references: [id])
+  performer_id Int?
+  iniciator    User?      @relation("TaskIniciator", fields: [iniciator_id], references: [id])
+  iniciator_id Int?
+  deadline     DateTime
+  spent_time   Int?
 }
 
 enum TaskStatus {

@@ -5,8 +5,8 @@ export const userLiteSelect = {
   name: true,
   email: true,
   password: true,
-  createdAt: true,
-  refreshToken: true,
+  created_at: true,
+  refresh_token: true,
 };
 
 export const userFullSelect = {

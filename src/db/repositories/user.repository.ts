@@ -36,6 +36,6 @@ export class UserRepository {
     userId: number;
     refreshToken: string | null;
   }): Promise<void> => {
-    await prisma.user.update({ where: { id: userId }, data: { refreshToken } });
+    await prisma.user.update({ where: { id: userId }, data: { refresh_token: refreshToken } });
   };
 }

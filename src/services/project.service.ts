@@ -51,7 +51,7 @@ export class ProjectService {
     return this.projectRepository.createProject({
       title,
       description,
-      authorId: user!.userId,
+      author_id: user!.userId,
     });
   };
 
@@ -121,9 +121,9 @@ export class ProjectService {
     const { now, filterDate } = this.assignFilterDate(filterTime);
 
     const totalMs = tasks.reduce((acc: number, task: TaskType) => {
-      if (!task.beginAt) return acc;
-      const taskBeginAt = new Date(task.beginAt);
-      const taskDoneAt = task.doneAt ? new Date(task.doneAt) : now;
+      if (!task.begin_at) return acc;
+      const taskBeginAt = new Date(task.begin_at);
+      const taskDoneAt = task.done_at ? new Date(task.done_at) : now;
 
       if (filterDate) {
         const effectiveStart = taskBeginAt > filterDate ? taskBeginAt : filterDate;
@@ -135,10 +135,10 @@ export class ProjectService {
         acc += ms;
       } else {
         if (task.status === TaskStatus.IN_PROGRESS) {
-          const { ms } = timeDifference(task.beginAt, now);
+          const { ms } = timeDifference(task.begin_at, now);
           acc += ms;
         } else if (task.status === TaskStatus.DONE) {
-          acc += Number(task.spentTime);
+          acc += Number(task.spent_time);
         }
       }
 

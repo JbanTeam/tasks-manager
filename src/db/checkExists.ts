@@ -79,8 +79,8 @@ const checkTaskStatus = ({ task, newStatus }: { task: TaskType; newStatus: TaskS
 
     taskData.doneAt = new Date();
 
-    if (task.beginAt) {
-      const { ms } = timeDifference(task.beginAt, taskData.doneAt);
+    if (task.begin_at) {
+      const { ms } = timeDifference(task.begin_at, taskData.doneAt);
       taskData.spentTime = ms;
     }
   }
